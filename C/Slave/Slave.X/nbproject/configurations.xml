@@ -4,16 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <logicalFolder name="Controllers" displayName="Controllers" projectFiles="true">
-      </logicalFolder>
-      <logicalFolder name="Drivers" displayName="Drivers" projectFiles="true">
-        <itemPath>../../Common/Drivers/SPI1_Driver.h</itemPath>
-        <itemPath>../../Common/Drivers/SPI2_Driver.h</itemPath>
-        <itemPath>../../Common/Drivers/SYSTEM_Driver.h</itemPath>
-        <itemPath>../../Common/Drivers/UART_Driver.h</itemPath>
-      </logicalFolder>
       <itemPath>Settings.h</itemPath>
-      <itemPath>../../Common/utils.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
