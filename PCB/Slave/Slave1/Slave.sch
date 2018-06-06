@@ -258,7 +258,7 @@ F 3 "" H 6450 2400 50  0001 C CNN
 $EndComp
 Text Label 4500 6550 0    60   ~ 0
 PCA_CS
-Text Label 4500 6650 0    60   ~ 0
+Text Label 4500 6450 0    60   ~ 0
 PCA_OE
 Text Label 5950 3200 2    60   ~ 0
 RESET
@@ -388,28 +388,6 @@ F 3 "" H 5250 1200 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Conn_01x01 J8
-U 1 1 5B16DAF4
-P 5850 950
-F 0 "J8" H 5850 1050 50  0000 C CNN
-F 1 "MH" H 5850 850 50  0000 C CNN
-F 2 "Mounting_Holes:MountingHole_2.7mm_M2.5_ISO14580_Pad" H 5850 950 50  0001 C CNN
-F 3 "" H 5850 950 50  0001 C CNN
-	1    5850 950 
-	1    0    0    -1  
-$EndComp
-$Comp
-L Conn_01x01 J10
-U 1 1 5B16E03C
-P 6150 950
-F 0 "J10" H 6150 1050 50  0000 C CNN
-F 1 "MH" H 6150 850 50  0000 C CNN
-F 2 "Mounting_Holes:MountingHole_2.7mm_M2.5_ISO14580_Pad" H 6150 950 50  0001 C CNN
-F 3 "" H 6150 950 50  0001 C CNN
-	1    6150 950 
-	1    0    0    -1  
-$EndComp
-$Comp
 L Conn_01x01 J9
 U 1 1 5B16E0EF
 P 5850 1250
@@ -418,17 +396,6 @@ F 1 "MH" H 5850 1150 50  0000 C CNN
 F 2 "Mounting_Holes:MountingHole_2.7mm_M2.5_ISO14580_Pad" H 5850 1250 50  0001 C CNN
 F 3 "" H 5850 1250 50  0001 C CNN
 	1    5850 1250
-	1    0    0    -1  
-$EndComp
-$Comp
-L Conn_01x01 J11
-U 1 1 5B16E1A9
-P 6150 1250
-F 0 "J11" H 6150 1350 50  0000 C CNN
-F 1 "MH" H 6150 1150 50  0000 C CNN
-F 2 "Mounting_Holes:MountingHole_2.7mm_M2.5_ISO14580_Pad" H 6150 1250 50  0001 C CNN
-F 3 "" H 6150 1250 50  0001 C CNN
-	1    6150 1250
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -467,12 +434,12 @@ $EndComp
 $Comp
 L C C6
 U 1 1 5B170EA3
-P 1900 1300
-F 0 "C6" H 1925 1400 50  0000 L CNN
-F 1 "1µ" H 1925 1200 50  0000 L CNN
-F 2 "Capacitors_SMD:C_0603_HandSoldering" H 1938 1150 50  0001 C CNN
-F 3 "" H 1900 1300 50  0001 C CNN
-	1    1900 1300
+P 2000 1300
+F 0 "C6" H 2025 1400 50  0000 L CNN
+F 1 "1µ" H 2025 1200 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0603_HandSoldering" H 2038 1150 50  0001 C CNN
+F 3 "" H 2000 1300 50  0001 C CNN
+	1    2000 1300
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -489,12 +456,12 @@ $EndComp
 $Comp
 L GND #PWR012
 U 1 1 5B171A77
-P 1900 1500
-F 0 "#PWR012" H 1900 1250 50  0001 C CNN
-F 1 "GND" H 1900 1350 50  0000 C CNN
-F 2 "" H 1900 1500 50  0001 C CNN
-F 3 "" H 1900 1500 50  0001 C CNN
-	1    1900 1500
+P 2000 1500
+F 0 "#PWR012" H 2000 1250 50  0001 C CNN
+F 1 "GND" H 2000 1350 50  0000 C CNN
+F 2 "" H 2000 1500 50  0001 C CNN
+F 3 "" H 2000 1500 50  0001 C CNN
+	1    2000 1500
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -764,7 +731,7 @@ Text Label 1950 2950 2    60   ~ 0
 RESET
 Text Label 1850 3950 2    60   ~ 0
 SEL_SCK
-Text Label 4500 6450 0    60   ~ 0
+Text Label 4500 6650 0    60   ~ 0
 MCP_CS
 Wire Wire Line
 	7750 2800 7650 2800
@@ -899,10 +866,10 @@ Connection ~ 1550 1250
 Wire Wire Line
 	1450 1050 2150 1050
 Wire Wire Line
-	2150 950  1900 950 
+	2150 950  2000 950 
 Wire Wire Line
-	1900 950  1900 1150
-Connection ~ 1900 1050
+	2000 950  2000 1150
+Connection ~ 2000 1050
 Wire Wire Line
 	3150 950  3750 950 
 Wire Wire Line
@@ -915,7 +882,7 @@ Wire Wire Line
 Wire Wire Line
 	3350 1500 3350 1400
 Wire Wire Line
-	1900 1500 1900 1450
+	2000 1500 2000 1450
 Wire Wire Line
 	3750 950  3750 900 
 Connection ~ 3650 950 
@@ -1200,10 +1167,7 @@ Wire Wire Line
 	4350 4050 4450 4050
 Wire Wire Line
 	4450 4150 4350 4150
-NoConn ~ 5650 950 
 NoConn ~ 5650 1250
-NoConn ~ 5950 950 
-NoConn ~ 5950 1250
 Wire Wire Line
 	2950 3250 3500 3250
 Wire Wire Line
@@ -1307,4 +1271,31 @@ NoConn ~ 4350 5750
 NoConn ~ 4350 5650
 NoConn ~ 4350 5550
 NoConn ~ 4350 5450
+$Comp
+L D D?
+U 1 1 5B1811C6
+P 1750 1300
+F 0 "D?" H 1750 1400 50  0000 C CNN
+F 1 "D" H 1750 1200 50  0000 C CNN
+F 2 "Diodes_SMD:D_MicroMELF_Hadsoldering" H 1750 1300 50  0001 C CNN
+F 3 "" H 1750 1300 50  0001 C CNN
+	1    1750 1300
+	0    1    1    0   
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 5B1815B1
+P 1750 1500
+F 0 "#PWR?" H 1750 1250 50  0001 C CNN
+F 1 "GND" H 1750 1350 50  0000 C CNN
+F 2 "" H 1750 1500 50  0001 C CNN
+F 3 "" H 1750 1500 50  0001 C CNN
+	1    1750 1500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1750 1500 1750 1450
+Wire Wire Line
+	1750 1150 1750 1050
+Connection ~ 1750 1050
 $EndSCHEMATC
