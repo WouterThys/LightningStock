@@ -1,5 +1,5 @@
 build/default/production/main.o:  \
 main.c  \
-utils.h  \
 Settings.h  \
- Drivers/SYSTEM_Driver.h 
+ ../../Common/Drivers/SYSTEM_Driver.h  \
+../../Common/utils.h 

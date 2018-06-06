@@ -1,5 +1,5 @@
-#ifndef SPI_DRIVER_H
-#define	SPI_DRIVER_H
+#ifndef SPI2_DRIVER_H
+#define	SPI2_DRIVER_H
 
 #ifdef	__cplusplus
 extern "C" {

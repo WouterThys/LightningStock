@@ -5,10 +5,10 @@
 #include <stdbool.h>       /* Includes true/false definition                  */
 #include <string.h>
 
-#include "utils.h"
 #include "Settings.h"
+#include "../../Common/Drivers/SYSTEM_Driver.h"
+#include "../../Common/utils.h"
 
-#include "Drivers/SYSTEM_Driver.h"
 
 
 /*******************************************************************************

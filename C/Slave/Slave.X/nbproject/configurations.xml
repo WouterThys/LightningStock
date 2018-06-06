@@ -7,12 +7,13 @@
       <logicalFolder name="Controllers" displayName="Controllers" projectFiles="true">
       </logicalFolder>
       <logicalFolder name="Drivers" displayName="Drivers" projectFiles="true">
-        <itemPath>Drivers/SPI1_Driver.h</itemPath>
-        <itemPath>Drivers/SPI2_Driver.h</itemPath>
-        <itemPath>Drivers/SYSTEM_Driver.h</itemPath>
-        <itemPath>Drivers/UART_Driver.h</itemPath>
+        <itemPath>../../Common/Drivers/SPI1_Driver.h</itemPath>
+        <itemPath>../../Common/Drivers/SPI2_Driver.h</itemPath>
+        <itemPath>../../Common/Drivers/SYSTEM_Driver.h</itemPath>
+        <itemPath>../../Common/Drivers/UART_Driver.h</itemPath>
       </logicalFolder>
       <itemPath>Settings.h</itemPath>
+      <itemPath>../../Common/utils.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -24,14 +25,14 @@
       <logicalFolder name="Controllers" displayName="Controllers" projectFiles="true">
       </logicalFolder>
       <logicalFolder name="Drivers" displayName="Drivers" projectFiles="true">
-        <itemPath>Drivers/SPI1_Driver.c</itemPath>
-        <itemPath>Drivers/SPI2_Driver.c</itemPath>
-        <itemPath>Drivers/SYSTEM_Driver.c</itemPath>
-        <itemPath>Drivers/UART_Driver.c</itemPath>
+        <itemPath>../../Common/Drivers/SPI1_Driver.c</itemPath>
+        <itemPath>../../Common/Drivers/SPI2_Driver.c</itemPath>
+        <itemPath>../../Common/Drivers/SYSTEM_Driver.c</itemPath>
+        <itemPath>../../Common/Drivers/UART_Driver.c</itemPath>
       </logicalFolder>
       <itemPath>configuration.c</itemPath>
       <itemPath>main.c</itemPath>
-      <itemPath>utils.c</itemPath>
+      <itemPath>../../Common/utils.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -41,6 +42,7 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>.</Elem>
+    <Elem>../../Common</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
