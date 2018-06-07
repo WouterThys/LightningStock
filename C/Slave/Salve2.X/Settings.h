@@ -27,10 +27,23 @@
 #define LED1            PORTBbits.RB15
 #define LED1_Dir        TRISBbits.TRISB15
 #define LED2            PORTBbits.RB14
-#define LED2_Dir        TRISBbits.TRISB14
+#define LED2_Dir        TRISBbits.TRISB14 
     
 
     
+/**
+ * NRF
+ */
+#define NRF_STALED_0    PORTAbits.RA0       /* Status LED for NRF             */
+#define NRF_SCSN        PORTBbits.RB13 /* TODO map to port */
+#define NRF_RES         PORTBbits.RB14
+#define NRF_IRQ         PORTBbits.RB15
+
+#define NRF_SCSN_Dir    TRISBbits.TRISB13
+#define NRF_RES_Dir     TRISBbits.TRISB14
+#define NRF_IRQ_Dir     TRISBbits.TRISB15
+
+
     
 /**
  * UART
@@ -55,10 +68,7 @@
 #define SPI1_SDO_Dir    TRISBbits.TRISB10    
     
 #define SPI1_SDI_Pin    PORTBbits.RB12      /* SDI Pin on RPI44-RB12          */
-#define SPI1_SDI_Dir    TRISBbits.TRISB12      
-    
-#define SPI1_CS_Pin     PORTAbits.RA4       /* CS DAC Pin on I/O-RA4          */
-#define SPI1_CS_Dir     TRISAbits.TRISA4    
+#define SPI1_SDI_Dir    TRISBbits.TRISB12        
     
 #define SPI1_SDO_Map    0b001000
 #define SPI1_SCK_Map    0b001001  
@@ -77,10 +87,7 @@
 #define SPI2_SDO_Dir    TRISBbits.TRISB10    
     
 #define SPI2_SDI_Pin    PORTBbits.RB12      /* SDI Pin on RPI44-RB12          */
-#define SPI2_SDI_Dir    TRISBbits.TRISB12      
-    
-#define SPI2_CS_Pin     PORTAbits.RA4       /* CS DAC Pin on I/O-RA4          */
-#define SPI2_CS_Dir     TRISAbits.TRISA4    
+#define SPI2_SDI_Dir    TRISBbits.TRISB12       
     
 #define SPI2_SDO_Map    0b001000
 #define SPI2_SCK_Map    0b001001  

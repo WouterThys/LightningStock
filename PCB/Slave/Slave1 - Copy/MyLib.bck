@@ -1,8 +1,0 @@
-EESchema-DOCLIB  Version 2.0
-#
-$CMP nRF24L01+
-D NRF24L01+ Single Chip 2.4GHz Transceiver
-K NRF Wireless 2.4 Transceiver SPI
-$ENDCMP
-#
-#End Doc Library
