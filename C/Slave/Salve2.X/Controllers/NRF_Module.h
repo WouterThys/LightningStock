@@ -525,7 +525,66 @@ volatile RX_PW_P5BITS nrfRX_PW_P5bits = {{.value = 0x00}, .address = 0x16};
 
 
 
+/************************* FIFO_STATUS ****************************************/   
+struct FIFO_STATUS_s {
+    union {
+        struct {
+            unsigned RX_EMPTY:1;         // RX FIFO empty flag
+            unsigned RX_FULL:1;          // RX FIFO full flag
+            unsigned :2;                 // Reserved
+            unsigned TX_EMPTY:1;         // TX FIFO empty flag
+            unsigned TX_FULL:1;          // TX FIFO full flag
+            unsigned DPL_P5:1;           // Enable dynamic payload
+            unsigned :2;                 // Reserved
+        };
+        long value;
+    };
+    uint8_t address;
+};
+typedef struct FIFO_STATUS_s FIFO_STATUSBITS;
+volatile FIFO_STATUSBITS nrfFIFO_STATUSbits = {{.value = 0x11}, .address = 0x17};
+#define nrfFIFO_STATUS   nrfFIFO_STATUSbits.value
 
+
+
+/************************* DYNPD *******************************************/   
+struct DYNPD_s {
+    union {
+        struct {
+            unsigned DPL_P0:1;           // Enable dynamic payload length data pipe 0
+            unsigned DPL_P1:1;           // Enable dynamic payload length data pipe 1
+            unsigned DPL_P2:1;           // Enable dynamic payload length data pipe 2
+            unsigned DPL_P3:1;           // Enable dynamic payload length data pipe 3
+            unsigned DPL_P4:1;           // Enable dynamic payload length data pipe 4
+            unsigned DPL_P5:1;           // Enable dynamic payload length data pipe 5
+            unsigned :2;                 // Reserved
+        };
+        long value;
+    };
+    uint8_t address;
+};
+typedef struct DYNPD_s DYNPDBITS;
+volatile DYNPDBITS nrfDYNPDbits = {{.value = 0x00}, .address = 0x1C};
+#define nrfDYNPD   nrfDYNPDbits.value
+
+
+
+/************************* FEATURE *******************************************/   
+struct FEATURE_s {
+    union {
+        struct {
+            unsigned EN_DYN_ACK:1;       // 
+            unsigned EN_ACK_PAY:1;       // Enable payload with ACK
+            unsigned EN_DPL:1;           // Enable dynamic payload length
+            unsigned :5;                 // Reserved
+        };
+        long value;
+    };
+    uint8_t address;
+};
+typedef struct FEATURE_s FEATUREBITS;
+volatile FEATUREBITS nrfFEATUREbits = {{.value = 0x00}, .address = 0x16};
+#define nrfFEATURE   nrfFEATUREbits.value
 
 
 
