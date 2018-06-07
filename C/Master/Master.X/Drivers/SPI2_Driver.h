@@ -27,7 +27,7 @@ void spi2Enable(bool enable);
  * 
  * @param data
  */
-void spi2Write(uint16_t data);
+uint8_t spi2Write(uint8_t data);
 
 
 

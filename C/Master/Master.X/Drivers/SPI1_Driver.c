@@ -55,9 +55,6 @@ void spi1Enable(bool enable) {
         // Ports
         SPI1_SDO_Dir = 0;           // SDO output   (RB10)
         SPI1_SCK_Dir = 0;           // SCK output   (RB11)
-        SPI1_CS_Dir = 0;            // CS output    (RA4)
-        
-        SPI1_CS_Pin = 1;             // Active low chip select
         
         // Registers
         RPOR4bits.RP43R = SPI1_SCK_Map;
@@ -71,9 +68,6 @@ void spi1Enable(bool enable) {
 }
 
 void spi1Write(uint16_t data) {
-    while (SPI1_CS_Pin == 0);
-    
-    SPI1_CS_Pin = 0;
     SPI1BUF = data;
 }
 
@@ -85,7 +79,6 @@ void spi1Write(uint16_t data) {
 // SPI TX done
 void __attribute__ ( (interrupt, no_auto_psv) ) _SPI1Interrupt(void) {
     if (_SPI1IF) {
-        SPI1_CS_Pin = 1;
         SPI1_ReadData = SPI1BUF;
         _SPI1IF = 0;
     }

@@ -38,7 +38,7 @@ void spi2Init() {
     SPI2CON1bits.CKE = 1;           // Serial output data changes on transition from Idle clock state to active clock state
     SPI2CON1bits.CKP = 0;           // Idle state for clock is a low level; active state is a high level mode
     SPI2CON1bits.MSTEN = 1;         // Master mode
-    SPI2CON1bits.SPRE = 0b11;       // Secondary pre-scale 8:1
+    SPI2CON1bits.SPRE = 0b000;       // Secondary pre-scale 8:1
     SPI2CON1bits.PPRE = 0b00;       // Primary pre-scale 64:1
 
     /* SPI2CON2 Register */
@@ -54,12 +54,13 @@ void spi2Init() {
 void spi2Enable(bool enable) {
     if (enable) {
         // Ports
-        SPI2_SDO_Dir = 0;           // SDO output   (RB10)
-        SPI2_SCK_Dir = 0;           // SCK output   (RB11)
+        SPI2_SDO_Dir = 0;           // SDO output   (RB11)
+        SPI2_SCK_Dir = 0;           // SCK output   (RB10)
+        SPI2_SDI_Dir = 1;           // SDI input    (RB12)
         
         // Registers
-        RPOR4bits.RP43R = SPI2_SCK_Map;
-        RPOR4bits.RP42R = SPI2_SDO_Map;
+        RPOR4bits.RP42R = SPI2_SCK_Map;
+        RPOR4bits.RP43R = SPI2_SDO_Map;
         RPINR22bits.SDI2R = SPI2_SDI_Map;
         
         SPI2STATbits.SPIEN = 1;     // Enable SPI2

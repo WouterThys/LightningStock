@@ -4,15 +4,15 @@
   <executable name="dist/default/production/Salve2.X.production.elf">
     <memory name="data">
       <units>bytes</units>
-      <length>32768</length>
-      <used>486</used>
-      <free>32282</free>
+      <length>4096</length>
+      <used>574</used>
+      <free>3522</free>
     </memory>
     <memory name="program">
       <units>bytes</units>
-      <length>263394</length>
-      <used>10062</used>
-      <free>253332</free>
+      <length>32994</length>
+      <used>10203</used>
+      <free>22791</free>
     </memory>
   </executable>
 </project>

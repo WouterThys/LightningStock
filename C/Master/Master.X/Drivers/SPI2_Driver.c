@@ -17,7 +17,8 @@
 /*******************************************************************************
  *          VARIABLES
  ******************************************************************************/
-uint16_t SPI2_ReadData;
+static uint8_t readData;
+static bool readDone;
 
 /*******************************************************************************
  *          BASIC FUNCTIONS
@@ -33,11 +34,12 @@ void spi2Init() {
     /* SPI2CON1 Register */
     SPI2CON1bits.DISSCK = 0;        // Internal SPI clock is enabled
     SPI2CON1bits.DISSDO = 0;        // SD02 pin is controlled by the module
-    SPI2CON1bits.MODE16 = 1;        // Communication is word-wide (16-bit)
+    SPI2CON1bits.MODE16 = 0;        // Communication is byte-wide (8-bit)
+    SPI2CON1bits.SMP = 0;
     SPI2CON1bits.CKE = 1;           // Serial output data changes on transition from Idle clock state to active clock state
     SPI2CON1bits.CKP = 0;           // Idle state for clock is a low level; active state is a high level mode
     SPI2CON1bits.MSTEN = 1;         // Master mode
-    SPI2CON1bits.SPRE = 0b00;       // Secondary pre-scale 8:1
+    SPI2CON1bits.SPRE = 0b000;       // Secondary pre-scale 8:1
     SPI2CON1bits.PPRE = 0b00;       // Primary pre-scale 64:1
 
     /* SPI2CON2 Register */
@@ -53,15 +55,13 @@ void spi2Init() {
 void spi2Enable(bool enable) {
     if (enable) {
         // Ports
-        SPI2_SDO_Dir = 0;           // SDO output   (RB10)
-        SPI2_SCK_Dir = 0;           // SCK output   (RB11)
-        SPI2_CS_Dir = 0;            // CS output    (RA4)
-        
-        SPI2_CS_Pin = 1;             // Active low chip select
+        SPI2_SDO_Dir = 0;           // SDO output   (RB11)
+        SPI2_SCK_Dir = 0;           // SCK output   (RB10)
+        SPI2_SDI_Dir = 1;           // SDI input    (RB12)
         
         // Registers
-        RPOR4bits.RP43R = SPI2_SCK_Map;
-        RPOR4bits.RP42R = SPI2_SDO_Map;
+        RPOR4bits.RP42R = SPI2_SCK_Map;
+        RPOR4bits.RP43R = SPI2_SDO_Map;
         RPINR22bits.SDI2R = SPI2_SDI_Map;
         
         SPI2STATbits.SPIEN = 1;     // Enable SPI2
@@ -70,11 +70,11 @@ void spi2Enable(bool enable) {
     }
 }
 
-void spi2Write(uint16_t data) {
-    while (SPI2_CS_Pin == 0);
-    
-    SPI2_CS_Pin = 0;
+uint8_t spi2Write(uint8_t data) {
+    readDone = false;
     SPI2BUF = data;
+    while(!readDone);
+    return readData;
 }
 
 
@@ -85,8 +85,8 @@ void spi2Write(uint16_t data) {
 // SPI TX done
 void __attribute__ ( (interrupt, no_auto_psv) ) _SPI2Interrupt(void) {
     if (_SPI2IF) {
-        SPI2_CS_Pin = 1;
-        SPI2_ReadData = SPI2BUF;
+        readData = SPI2BUF;
+        readDone = true;
         _SPI2IF = 0;
     }
 }

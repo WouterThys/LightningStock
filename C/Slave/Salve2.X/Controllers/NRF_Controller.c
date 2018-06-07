@@ -16,67 +16,6 @@
 #define NRF_WRITE_REG   0x00
 #define NRF_READ_REG    0x80   
 
-union TXSTAU TXSTAu;
-#define TXSTAbits       TXSTAu.TXSTAb
-#define TXSTA           TXSTAu.TXSTAr 
-union TXMODU TXMODu;
-#define TXMODbits       TXMODu.TXMODb
-#define TXMOD           TXMODu.TXMODr
-union I2SCNF_INU I2SCNF_INu;
-#define I2SCNF_INbits   I2SCNF_INu.I2SCNF_INb
-#define I2SCNF_IN       I2SCNF_INu.I2SCNF_INr
-union RXMODS RXMODs;
-#define RXMODbits       RXMODs.RXMODb
-#define RXMOD           RXMODs.RXMODr
-union I2SCNF_OUTU I2SCNF_OUTu;
-#define I2SCNF_OUTbits  I2SCNF_OUTu.I2SCNF_OUTb
-#define I2SCNF_OUT      I2SCNF_OUTu.I2SCNF_OUTr
-union LNKSTAU LNKSTAu;
-#define LNKSTAbits      LNKSTAu.LNKSTAb
-#define LNKSTA          LNKSTAu.LNKSTAr
-union LNKMODU LNKMODu;
-#define LNKMODbits      LNKMODu.LNKMODb
-#define LNKMOD          LNKMODu.LNKMODr
-union INTSTAU INTSTAu;
-#define INTSTAbits      INTSTAu.INTSTAb
-#define INTSTA          INTSTAu.INTSTAr
-union INTCFU INTCFu;
-#define INTCFbits       INTCFu.INTCFb
-#define INTCF           INTCFu.INTCFr
-union TXRESOU TXRESOu;
-#define TXRESObits      TXRESOu.TXRESOb
-#define TXRESO          TXRESOu.TXRESOr
-union TESTCHU TESTCHu;
-#define TESTCHbits      TESTCHu.TESTCHb
-#define TESTCH          TESTCHu.TESTCHr
-
-uint8_t TXCOUNTr;
-#define TXCOUNT TXCOUNTr
-uint8_t RXCOUNTr;
-#define RXCOUNT RXCOUNTr
-uint8_t DTXSTAr;
-#define DTXSTA DTXSTAr
-uint8_t BCHDr;
-#define BCHD BCHDr
-uint8_t NBCHr;
-#define NBCH NBCHr
-uint8_t NACHr;
-#define NACH NACHr
-uint8_t NLCHr;
-#define NLCH NLCHr
-uint8_t MDURr;
-#define MDUR MDURr
-uint8_t TXLATr;
-#define TXLAT TXLATr
-uint8_t TXPWRr;
-#define TXPWR TXPWRr
-uint8_t RXPWRr;
-#define RXPWR RXPWRr
-uint8_t LNKCSTATEr;
-#define LNKCSTATE LNKCSTATEr   
-uint8_t TESTREGr;
-#define TESTREG TESTREGr
-
 // Local defines
 #define WFSM_SSetup     0x0001    
 #define WFSM_SWrite     0x0002
@@ -92,8 +31,7 @@ uint8_t TESTREGr;
 /*******************************************************************************
  *          MACRO FUNCTIONS
  ******************************************************************************/
-#define SPI_Write(data) spi2Write(data)
-#define NRF_Reset       NRF_RES = 0; NRF_RES = 1; DelayMs(10); NRF_RES = 0  
+#define NRF_Reset       NRF_CE = 0; NRF_CE = 1; DelayMs(10); NRF_CE = 0  
 
 #define tdSSCK              DelayUs(500) 
 #define tSRD                DelayUs(500)
@@ -129,30 +67,30 @@ static void    NRF_Configure(void); // Configure the registers of the NRF module
 static void    NRF_WaitForLink(void); // Wait for a link between the modules
 
 void NRF_WriteRegister(uint8_t reg, uint8_t value) {
-    NRF_SCSN = 0; // Pull SCSN low
+    NRF_CSN = 0; // Pull SCSN low
     
     tdSSCK;
-    SPI_Write(NRF_WRITE_REG | reg); // Write address
+    spi2Write(NRF_WRITE_REG | reg); // Write address
     tSRD;
-    SPI_Write(value); // Write value
+    nrfSTATUS = spi2Write(value); // Write value
     tSREADY;
 
-    NRF_SCSN = 1; // Pull SCSN high
+    NRF_CSN = 1; // Pull SCSN high
     tEND;
 }
 
 uint8_t NRF_ReadRegister(uint8_t reg) {
     uint8_t read;
     
-    NRF_SCSN = 0; // Pull SCSN low
+    NRF_CSN = 0; // Pull SCSN low
     
     tdSSCK;
-    SPI_Write(NRF_READ_REG | reg); // Write address
+    spi2Write(NRF_READ_REG | reg); // Write address
     tSRD;
-    read = SPI_Write(0x00); // Read value
+    read = spi2Write(0x00); // Read value
     tSREADY;
     
-    NRF_SCSN = 1; // Pull SCSN high
+    NRF_CSN = 1; // Pull SCSN high
     tEND;
     return read;
 }
@@ -187,17 +125,8 @@ void NRF_Configure() {
     NRF_Reset; // Reset
     ////C_DEBUG_WriteMessage("NRF reset");
     NRF_STALED_0 = 0;
-    NRF_SCSN = 1; // Active low SCSN pin
+    NRF_CSN = 1; // Active low SCSN pin
     tSTARTUP;
-    
-    
-    // TEST
-    CONFIGbits.CRCO = 1;
-    
-    CONFIG = 0x55;
-    
-    NRF_WriteRegister(CONFIGbits.address, CONFIGbits.value);
-    // TEST
     
     // Write registers
     NRF_WriteRegister(NRF_TXSTA_Adr, 0x50); // 32kHz
@@ -231,15 +160,16 @@ void NRF_Configure() {
  *          CONTROLLER FUNCTIONS
 *******************************************************************************/
 void nrfInit() {
-    // Initialise ports
-    NRF_RES_Dir = 0;
-    NRF_SCSN_Dir = 0; 
+    // Initialize ports
+    NRF_CE_Dir = 0;
+    NRF_CSN_Dir = 0; 
     NRF_IRQ_Dir  = 1; /** set as input when used!!! Map to interrupt port**/ 
     
-    // Initialise SPI module
+    // Initialize SPI module
     spi2Init();
+    spi2Enable(true);
     
-    // Initialise status
+    // Initialize status
     status.STA = NRF_STATUS_Initialize;
     WFsm.NextState = WFSM_SSetup;
     WFsm.State = WFSM_SSetup;

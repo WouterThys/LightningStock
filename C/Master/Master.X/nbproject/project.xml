@@ -6,12 +6,12 @@
             <name>Master</name>
             <creation-uuid>63ad19ee-e469-4066-a5df-86664e9fd7b8</creation-uuid>
             <make-project-type>0</make-project-type>
-            <c-extensions/>
+            <c-extensions>c</c-extensions>
             <cpp-extensions/>
-            <header-extensions/>
+            <header-extensions>h</header-extensions>
             <asminc-extensions/>
-            <make-dep-projects/>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
+            <make-dep-projects/>
         </data>
     </configuration>
 </project>

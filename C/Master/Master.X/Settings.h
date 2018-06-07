@@ -3,8 +3,6 @@
 #ifndef SETTINGS_H
 #define	SETTINGS_H
 
-#include <xc.h> // include processor files - each processor file is guarded.  
-
 #define DEBUG       1
     
     
@@ -19,20 +17,34 @@
 #define IP_U1RX     3
 #define SPI2_IP     2
 #define SPI1_IP     4
-#define IP_CN       1
+#define IP_INT1     1
 
     
 /**
  *  PIC
  */
  
-#define LED1            PORTBbits.RB15
-#define LED1_Dir        TRISBbits.TRISB15
-#define LED2            PORTBbits.RB14
-#define LED2_Dir        TRISBbits.TRISB14
+//#define LED1            PORTBbits.RB15
+//#define LED1_Dir        TRISBbits.TRISB15
+//#define LED2            PORTBbits.RB14
+//#define LED2_Dir        TRISBbits.TRISB14 
     
 
     
+/**
+ * NRF
+ */
+#define NRF_STALED_0    PORTAbits.RA0       /* Status LED for NRF             */
+
+#define NRF_CSN         PORTBbits.RB14 
+#define NRF_CE          PORTBbits.RB13
+#define NRF_IRQ         PORTBbits.RB15
+
+#define NRF_CSN_Dir     TRISBbits.TRISB14
+#define NRF_CE_Dir      TRISBbits.TRISB13
+#define NRF_IRQ_Dir     TRISBbits.TRISB15
+
+
     
 /**
  * UART
@@ -57,10 +69,7 @@
 #define SPI1_SDO_Dir    TRISBbits.TRISB10    
     
 #define SPI1_SDI_Pin    PORTBbits.RB12      /* SDI Pin on RPI44-RB12          */
-#define SPI1_SDI_Dir    TRISBbits.TRISB12      
-    
-#define SPI1_CS_Pin     PORTAbits.RA4       /* CS DAC Pin on I/O-RA4          */
-#define SPI1_CS_Dir     TRISAbits.TRISA4    
+#define SPI1_SDI_Dir    TRISBbits.TRISB12        
     
 #define SPI1_SDO_Map    0b001000
 #define SPI1_SCK_Map    0b001001  
@@ -72,19 +81,16 @@
  * SPI 2
  */    
     
-#define SPI2_SCK_Pin    PORTBbits.RB11      /* SCK Pin on RP43-RB11           */
-#define SPI2_SCK_Dir    TRISBbits.TRISB11
+#define SPI2_SCK_Pin    PORTBbits.RB10      /* SCK Pin on RP42-RB10           */
+#define SPI2_SCK_Dir    TRISBbits.TRISB10
     
-#define SPI2_SDO_Pin    PORTBbits.RB10      /* SDO Pin on RP42-RB10           */
-#define SPI2_SDO_Dir    TRISBbits.TRISB10    
+#define SPI2_SDO_Pin    PORTBbits.RB11      /* SDO Pin on RP43-RB11           */
+#define SPI2_SDO_Dir    TRISBbits.TRISB11    
     
 #define SPI2_SDI_Pin    PORTBbits.RB12      /* SDI Pin on RPI44-RB12          */
-#define SPI2_SDI_Dir    TRISBbits.TRISB12      
+#define SPI2_SDI_Dir    TRISBbits.TRISB12       
     
-#define SPI2_CS_Pin     PORTAbits.RA4       /* CS DAC Pin on I/O-RA4          */
-#define SPI2_CS_Dir     TRISAbits.TRISA4    
-    
-#define SPI2_SDO_Map    0b001000
+#define SPI2_SDO_Map    0b001000 
 #define SPI2_SCK_Map    0b001001  
 #define SPI2_SDI_Map    44
 

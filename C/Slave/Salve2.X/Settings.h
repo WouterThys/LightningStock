@@ -24,10 +24,10 @@
  *  PIC
  */
  
-#define LED1            PORTBbits.RB15
-#define LED1_Dir        TRISBbits.TRISB15
-#define LED2            PORTBbits.RB14
-#define LED2_Dir        TRISBbits.TRISB14 
+//#define LED1            PORTBbits.RB15
+//#define LED1_Dir        TRISBbits.TRISB15
+//#define LED2            PORTBbits.RB14
+//#define LED2_Dir        TRISBbits.TRISB14 
     
 
     
@@ -35,12 +35,13 @@
  * NRF
  */
 #define NRF_STALED_0    PORTAbits.RA0       /* Status LED for NRF             */
-#define NRF_SCSN        PORTBbits.RB13 /* TODO map to port */
-#define NRF_RES         PORTBbits.RB14
+
+#define NRF_CSN         PORTBbits.RB14 
+#define NRF_CE          PORTBbits.RB13
 #define NRF_IRQ         PORTBbits.RB15
 
-#define NRF_SCSN_Dir    TRISBbits.TRISB13
-#define NRF_RES_Dir     TRISBbits.TRISB14
+#define NRF_CSN_Dir     TRISBbits.TRISB14
+#define NRF_CE_Dir      TRISBbits.TRISB13
 #define NRF_IRQ_Dir     TRISBbits.TRISB15
 
 
@@ -80,16 +81,16 @@
  * SPI 2
  */    
     
-#define SPI2_SCK_Pin    PORTBbits.RB11      /* SCK Pin on RP43-RB11           */
-#define SPI2_SCK_Dir    TRISBbits.TRISB11
+#define SPI2_SCK_Pin    PORTBbits.RB10      /* SCK Pin on RP42-RB10           */
+#define SPI2_SCK_Dir    TRISBbits.TRISB10
     
-#define SPI2_SDO_Pin    PORTBbits.RB10      /* SDO Pin on RP42-RB10           */
-#define SPI2_SDO_Dir    TRISBbits.TRISB10    
+#define SPI2_SDO_Pin    PORTBbits.RB11      /* SDO Pin on RP43-RB11           */
+#define SPI2_SDO_Dir    TRISBbits.TRISB11    
     
 #define SPI2_SDI_Pin    PORTBbits.RB12      /* SDI Pin on RPI44-RB12          */
 #define SPI2_SDI_Dir    TRISBbits.TRISB12       
     
-#define SPI2_SDO_Map    0b001000
+#define SPI2_SDO_Map    0b001000 
 #define SPI2_SCK_Map    0b001001  
 #define SPI2_SDI_Map    44
 
