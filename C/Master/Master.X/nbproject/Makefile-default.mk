@@ -19,7 +19,7 @@ endif
 endif
 
 # Environment
-MKDIR=mkdir -p
+MKDIR=gnumkdir -p
 RM=rm -f 
 MV=mv 
 CP=cp 
@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=Controllers/NRF_Controller.c Drivers/SPI1_Driver.c Drivers/SPI2_Driver.c Drivers/SYSTEM_Driver.c Drivers/UART_Driver.c configuration.c main.c utils.c
+SOURCEFILES_QUOTED_IF_SPACED=Controllers/NRF_Controller.c Drivers/SYSTEM_Driver.c configuration.c main.c utils.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Controllers/NRF_Controller.o ${OBJECTDIR}/Drivers/SPI1_Driver.o ${OBJECTDIR}/Drivers/SPI2_Driver.o ${OBJECTDIR}/Drivers/SYSTEM_Driver.o ${OBJECTDIR}/Drivers/UART_Driver.o ${OBJECTDIR}/configuration.o ${OBJECTDIR}/main.o ${OBJECTDIR}/utils.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/Controllers/NRF_Controller.o.d ${OBJECTDIR}/Drivers/SPI1_Driver.o.d ${OBJECTDIR}/Drivers/SPI2_Driver.o.d ${OBJECTDIR}/Drivers/SYSTEM_Driver.o.d ${OBJECTDIR}/Drivers/UART_Driver.o.d ${OBJECTDIR}/configuration.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/utils.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Controllers/NRF_Controller.o ${OBJECTDIR}/Drivers/SYSTEM_Driver.o ${OBJECTDIR}/configuration.o ${OBJECTDIR}/main.o ${OBJECTDIR}/utils.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/Controllers/NRF_Controller.o.d ${OBJECTDIR}/Drivers/SYSTEM_Driver.o.d ${OBJECTDIR}/configuration.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/utils.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/Controllers/NRF_Controller.o ${OBJECTDIR}/Drivers/SPI1_Driver.o ${OBJECTDIR}/Drivers/SPI2_Driver.o ${OBJECTDIR}/Drivers/SYSTEM_Driver.o ${OBJECTDIR}/Drivers/UART_Driver.o ${OBJECTDIR}/configuration.o ${OBJECTDIR}/main.o ${OBJECTDIR}/utils.o
+OBJECTFILES=${OBJECTDIR}/Controllers/NRF_Controller.o ${OBJECTDIR}/Drivers/SYSTEM_Driver.o ${OBJECTDIR}/configuration.o ${OBJECTDIR}/main.o ${OBJECTDIR}/utils.o
 
 # Source Files
-SOURCEFILES=Controllers/NRF_Controller.c Drivers/SPI1_Driver.c Drivers/SPI2_Driver.c Drivers/SYSTEM_Driver.c Drivers/UART_Driver.c configuration.c main.c utils.c
+SOURCEFILES=Controllers/NRF_Controller.c Drivers/SYSTEM_Driver.c configuration.c main.c utils.c
 
 
 CFLAGS=
@@ -101,33 +101,12 @@ ${OBJECTDIR}/Controllers/NRF_Controller.o: Controllers/NRF_Controller.c  nbproje
 	${MP_CC} $(MP_EXTRA_CC_PRE)  Controllers/NRF_Controller.c  -o ${OBJECTDIR}/Controllers/NRF_Controller.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Controllers/NRF_Controller.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/Controllers/NRF_Controller.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
-${OBJECTDIR}/Drivers/SPI1_Driver.o: Drivers/SPI1_Driver.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}/Drivers" 
-	@${RM} ${OBJECTDIR}/Drivers/SPI1_Driver.o.d 
-	@${RM} ${OBJECTDIR}/Drivers/SPI1_Driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  Drivers/SPI1_Driver.c  -o ${OBJECTDIR}/Drivers/SPI1_Driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Drivers/SPI1_Driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
-	@${FIXDEPS} "${OBJECTDIR}/Drivers/SPI1_Driver.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/Drivers/SPI2_Driver.o: Drivers/SPI2_Driver.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}/Drivers" 
-	@${RM} ${OBJECTDIR}/Drivers/SPI2_Driver.o.d 
-	@${RM} ${OBJECTDIR}/Drivers/SPI2_Driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  Drivers/SPI2_Driver.c  -o ${OBJECTDIR}/Drivers/SPI2_Driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Drivers/SPI2_Driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
-	@${FIXDEPS} "${OBJECTDIR}/Drivers/SPI2_Driver.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
 ${OBJECTDIR}/Drivers/SYSTEM_Driver.o: Drivers/SYSTEM_Driver.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/Drivers" 
 	@${RM} ${OBJECTDIR}/Drivers/SYSTEM_Driver.o.d 
 	@${RM} ${OBJECTDIR}/Drivers/SYSTEM_Driver.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  Drivers/SYSTEM_Driver.c  -o ${OBJECTDIR}/Drivers/SYSTEM_Driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Drivers/SYSTEM_Driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/Drivers/SYSTEM_Driver.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/Drivers/UART_Driver.o: Drivers/UART_Driver.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}/Drivers" 
-	@${RM} ${OBJECTDIR}/Drivers/UART_Driver.o.d 
-	@${RM} ${OBJECTDIR}/Drivers/UART_Driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  Drivers/UART_Driver.c  -o ${OBJECTDIR}/Drivers/UART_Driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Drivers/UART_Driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
-	@${FIXDEPS} "${OBJECTDIR}/Drivers/UART_Driver.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 ${OBJECTDIR}/configuration.o: configuration.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -158,33 +137,12 @@ ${OBJECTDIR}/Controllers/NRF_Controller.o: Controllers/NRF_Controller.c  nbproje
 	${MP_CC} $(MP_EXTRA_CC_PRE)  Controllers/NRF_Controller.c  -o ${OBJECTDIR}/Controllers/NRF_Controller.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Controllers/NRF_Controller.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/Controllers/NRF_Controller.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
-${OBJECTDIR}/Drivers/SPI1_Driver.o: Drivers/SPI1_Driver.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}/Drivers" 
-	@${RM} ${OBJECTDIR}/Drivers/SPI1_Driver.o.d 
-	@${RM} ${OBJECTDIR}/Drivers/SPI1_Driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  Drivers/SPI1_Driver.c  -o ${OBJECTDIR}/Drivers/SPI1_Driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Drivers/SPI1_Driver.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
-	@${FIXDEPS} "${OBJECTDIR}/Drivers/SPI1_Driver.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/Drivers/SPI2_Driver.o: Drivers/SPI2_Driver.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}/Drivers" 
-	@${RM} ${OBJECTDIR}/Drivers/SPI2_Driver.o.d 
-	@${RM} ${OBJECTDIR}/Drivers/SPI2_Driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  Drivers/SPI2_Driver.c  -o ${OBJECTDIR}/Drivers/SPI2_Driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Drivers/SPI2_Driver.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
-	@${FIXDEPS} "${OBJECTDIR}/Drivers/SPI2_Driver.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
 ${OBJECTDIR}/Drivers/SYSTEM_Driver.o: Drivers/SYSTEM_Driver.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/Drivers" 
 	@${RM} ${OBJECTDIR}/Drivers/SYSTEM_Driver.o.d 
 	@${RM} ${OBJECTDIR}/Drivers/SYSTEM_Driver.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  Drivers/SYSTEM_Driver.c  -o ${OBJECTDIR}/Drivers/SYSTEM_Driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Drivers/SYSTEM_Driver.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/Drivers/SYSTEM_Driver.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/Drivers/UART_Driver.o: Drivers/UART_Driver.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}/Drivers" 
-	@${RM} ${OBJECTDIR}/Drivers/UART_Driver.o.d 
-	@${RM} ${OBJECTDIR}/Drivers/UART_Driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  Drivers/UART_Driver.c  -o ${OBJECTDIR}/Drivers/UART_Driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Drivers/UART_Driver.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
-	@${FIXDEPS} "${OBJECTDIR}/Drivers/UART_Driver.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 ${OBJECTDIR}/configuration.o: configuration.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -224,15 +182,15 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: link
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-dist/${CND_CONF}/${IMAGE_TYPE}/Master.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    
+dist/${CND_CONF}/${IMAGE_TYPE}/Master.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk  Lib/SPI2_Master_Lib.X.a Lib/UART_Lib.X.a Lib/SPI1_Master_Lib.X.a  
 	@${MKDIR} dist/${CND_CONF}/${IMAGE_TYPE} 
-	${MP_CC} $(MP_EXTRA_LD_PRE)  -o dist/${CND_CONF}/${IMAGE_TYPE}/Master.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      -mcpu=$(MP_PROCESSOR_OPTION)        -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)   -mreserve=data@0x1000:0x101B -mreserve=data@0x101C:0x101D -mreserve=data@0x101E:0x101F -mreserve=data@0x1020:0x1021 -mreserve=data@0x1022:0x1023 -mreserve=data@0x1024:0x1027 -mreserve=data@0x1028:0x104F   -Wl,--local-stack,,--defsym=__MPLAB_BUILD=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,$(MP_LINKER_FILE_OPTION),--stack=16,--check-sections,--data-init,--pack-data,--handles,--isr,--no-gc-sections,--fill-upper=0,--stackguard=16,--no-force-link,--smart-io,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--report-mem,--memorysummary,dist/${CND_CONF}/${IMAGE_TYPE}/memoryfile.xml$(MP_EXTRA_LD_POST) 
+	${MP_CC} $(MP_EXTRA_LD_PRE)  -o dist/${CND_CONF}/${IMAGE_TYPE}/Master.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}    Lib\SPI2_Master_Lib.X.a Lib\UART_Lib.X.a Lib\SPI1_Master_Lib.X.a  -mcpu=$(MP_PROCESSOR_OPTION)        -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)   -mreserve=data@0x1000:0x101B -mreserve=data@0x101C:0x101D -mreserve=data@0x101E:0x101F -mreserve=data@0x1020:0x1021 -mreserve=data@0x1022:0x1023 -mreserve=data@0x1024:0x1027 -mreserve=data@0x1028:0x104F   -Wl,--local-stack,,--defsym=__MPLAB_BUILD=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,$(MP_LINKER_FILE_OPTION),--stack=16,--check-sections,--data-init,--pack-data,--handles,--isr,--no-gc-sections,--fill-upper=0,--stackguard=16,--no-force-link,--smart-io,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--report-mem,--memorysummary,dist/${CND_CONF}/${IMAGE_TYPE}/memoryfile.xml$(MP_EXTRA_LD_POST) 
 	
 else
-dist/${CND_CONF}/${IMAGE_TYPE}/Master.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   
+dist/${CND_CONF}/${IMAGE_TYPE}/Master.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk  Lib/SPI2_Master_Lib.X.a Lib/UART_Lib.X.a Lib/SPI1_Master_Lib.X.a 
 	@${MKDIR} dist/${CND_CONF}/${IMAGE_TYPE} 
-	${MP_CC} $(MP_EXTRA_LD_PRE)  -o dist/${CND_CONF}/${IMAGE_TYPE}/Master.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      -mcpu=$(MP_PROCESSOR_OPTION)        -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -Wl,--local-stack,,--defsym=__MPLAB_BUILD=1,$(MP_LINKER_FILE_OPTION),--stack=16,--check-sections,--data-init,--pack-data,--handles,--isr,--no-gc-sections,--fill-upper=0,--stackguard=16,--no-force-link,--smart-io,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--report-mem,--memorysummary,dist/${CND_CONF}/${IMAGE_TYPE}/memoryfile.xml$(MP_EXTRA_LD_POST) 
-	${MP_CC_DIR}/xc16-bin2hex dist/${CND_CONF}/${IMAGE_TYPE}/Master.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX} -a  -omf=elf  
+	${MP_CC} $(MP_EXTRA_LD_PRE)  -o dist/${CND_CONF}/${IMAGE_TYPE}/Master.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}    Lib\SPI2_Master_Lib.X.a Lib\UART_Lib.X.a Lib\SPI1_Master_Lib.X.a  -mcpu=$(MP_PROCESSOR_OPTION)        -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -Wl,--local-stack,,--defsym=__MPLAB_BUILD=1,$(MP_LINKER_FILE_OPTION),--stack=16,--check-sections,--data-init,--pack-data,--handles,--isr,--no-gc-sections,--fill-upper=0,--stackguard=16,--no-force-link,--smart-io,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--report-mem,--memorysummary,dist/${CND_CONF}/${IMAGE_TYPE}/memoryfile.xml$(MP_EXTRA_LD_POST) 
+	${MP_CC_DIR}\\xc16-bin2hex dist/${CND_CONF}/${IMAGE_TYPE}/Master.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX} -a  -omf=elf  
 	
 endif
 
@@ -252,7 +210,7 @@ endif
 # Enable dependency checking
 .dep.inc: .depcheck-impl
 
-DEPFILES=$(shell "${PATH_TO_IDE_BIN}"mplabwildcard ${POSSIBLE_DEPFILES})
+DEPFILES=$(shell mplabwildcard ${POSSIBLE_DEPFILES})
 ifneq (${DEPFILES},)
 include ${DEPFILES}
 endif

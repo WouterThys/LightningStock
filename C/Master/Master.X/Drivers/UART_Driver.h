@@ -1,6 +1,34 @@
 #ifndef UART_DRIVER_H
 #define	UART_DRIVER_H
 
+#include "../Settings.h"
+#include "SYSTEM_Driver.h"
+
+
+#ifndef FCY
+ #define SYS_FREQ        140000000L
+ #define FCY             SYS_FREQ/2
+#endif
+
+#ifndef IP_U1RX
+ #define IP_U1RX         1
+#endif
+
+#ifndef UART1_RX_Dir
+ #define UART1_RX_Dir     TRISBbits.TRISB6
+ #define UART1_RX_Map     0b0100110           /* RX on RP38                     */
+#endif
+
+#ifndef UART1_TX_Dir
+ #define UART1_TX_Dir    TRISBbits.TRISB7
+ #define UART1_TX_Map    RPOR2bits.RP39R     /* TX on RP39                    */
+#endif
+
+#ifndef UART1_BAUD
+ #define UART1_BAUD      57600
+#endif
+
+
 /**
  * Select the message type, only one of these types should be selected!
  */

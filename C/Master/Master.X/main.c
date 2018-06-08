@@ -32,14 +32,15 @@
 /*******************************************************************************
  *          VARIABLES
  ******************************************************************************/
-
+static bool nrfIrqFlag = false;
+static nrfIrq_t nrfIrq;
 
 /*******************************************************************************
  *          LOCAL FUNCTIONS
  ******************************************************************************/
 static void initialize();
 static void uartReadDone(UartData_t data);
-static void nrfInterrupt(uint8_t source);
+static void nrfInterrupt(nrfIrq_t irqState);
 
 void initialize() {
     sysInterruptEnable(false);
@@ -59,8 +60,9 @@ void uartReadDone(UartData_t data) {
 }
 
 
-void nrfInterrupt(uint8_t source) {
-    printf("IRQ: %d\n", source);
+void nrfInterrupt(nrfIrq_t irqState) {
+    nrfIrq = irqState;
+    nrfIrqFlag = true;
 }
 
 
@@ -83,6 +85,20 @@ int main(void) {
     printf("panda");
     
     while(1) {
+        
+        if (nrfIrqFlag) {
+            if (nrfIrq.maxRetry) {
+                printf("IRQ: Max retry..");
+            }
+            if (nrfIrq.sendReady) {
+                printf("IRQ: Send ready..");
+            }
+            if (nrfIrq.readReady) {
+                printf("IRQ: Read ready..");
+            }
+            nrfIrqFlag = false;
+        }
+        
         
     }
 }

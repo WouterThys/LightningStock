@@ -29,10 +29,7 @@
         <itemPath>Controllers/NRF_Controller.c</itemPath>
       </logicalFolder>
       <logicalFolder name="Drivers" displayName="Drivers" projectFiles="true">
-        <itemPath>Drivers/SPI1_Driver.c</itemPath>
-        <itemPath>Drivers/SPI2_Driver.c</itemPath>
         <itemPath>Drivers/SYSTEM_Driver.c</itemPath>
-        <itemPath>Drivers/UART_Driver.c</itemPath>
       </logicalFolder>
       <itemPath>configuration.c</itemPath>
       <itemPath>main.c</itemPath>
@@ -59,11 +56,14 @@
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC16</languageToolchain>
         <languageToolchainVersion>1.33</languageToolchainVersion>
-        <platform>2</platform>
+        <platform>3</platform>
       </toolsSet>
       <compileType>
         <linkerTool>
           <linkerLibItems>
+            <linkerLibFileItem>Lib/SPI2_Master_Lib.X.a</linkerLibFileItem>
+            <linkerLibFileItem>Lib/UART_Lib.X.a</linkerLibFileItem>
+            <linkerLibFileItem>Lib/SPI1_Master_Lib.X.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
