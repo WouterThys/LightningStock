@@ -6,317 +6,340 @@
 #include "../Drivers/SYSTEM_Driver.h"
 #include "../Drivers/SPI2_Driver.h"
 #include "../Settings.h"
-#include "NRF_Channels.h"
 #include "NRF_Module.h"
 #include "NRF_Controller.h"
 
 /*******************************************************************************
  *          DEFINES
  ******************************************************************************/
-#define NRF_WRITE_REG   0x00
-#define NRF_READ_REG    0x80   
+#define R_REGISTER      0x00
+#define W_REGISTER      0x20
+#define R_RX_PAYLOAD    0x61
+#define W_TX_PAYLOAD    0xA0
+#define FLUSH_TX        0xE1
+#define FLUSH_RX        0xE2
+#define W_NOP           0xFF
 
-// Local defines
-#define WFSM_SSetup     0x0001    
-#define WFSM_SWrite     0x0002
-#define WFSM_SWait      0x0003
-#define WFSM_SCheck     0x0004
-
-#define CRC_OK          0x01
-#define CRC_NOK         0x00
-
-#define RESEND_MAX      10
-#define WAIT_MAX        10
+#define R_REGISTER_MSK  0x1F
+#define W_REGISTER_MSK  0x1F
 
 /*******************************************************************************
  *          MACRO FUNCTIONS
  ******************************************************************************/
 #define NRF_Reset       NRF_CE = 0; NRF_CE = 1; DelayMs(10); NRF_CE = 0  
-
-#define tdSSCK              DelayUs(500) 
-#define tSRD                DelayUs(500)
-#define tSREADY             DelayUs(500)
-#define tEND                DelayUs(100)
-#define tSTARTUP            DelayMs(100)
+#define NrfWrite(d)     spi2Write(d); 
 
 /*******************************************************************************
  *          VARIABLES
  ******************************************************************************/
-static nrfStatus_t status;
-static nrfData_t writeData;
-static nrfData_t readData;
-static bool writeBusy, readFlag, writeFlag;
-static uint16_t waitCnt, resendCnt; 
+static nrfIrq_t nrfIrqState;
+static uint8_t lastAddress;
+static uint8_t thisAddress;
 
-// Finite state machine 
-struct FSM {
-    uint16_t     State; // Current state of the Finite State Machine
-    uint16_t     NextState; // Next state of the Finite State Machine
-}WFsm;
-
-
+/* Event function pointers */
+static void (*nrfInterrupt)(nrfIrq_t irqState);
 
 /*******************************************************************************
  *          LOCAL FUNCTIONS
 *******************************************************************************/
 static void    NRF_WriteRegister(uint8_t reg, uint8_t value); // Write to a register
 static uint8_t NRF_ReadRegister(uint8_t reg); // Read from a register
-static void    NRF_WriteData(void); // Write data
-static void    NRF_ReadData(void); // Read data
+static void    NRF_UpdateStatus();
+static void    NRF_WritePayload(uint8_t * data, uint16_t length);
+static void    NRF_ReadPayload(uint8_t * data, uint8_t count);
+static void    NRF_FlushTx();
+static void    NRF_FlushRx();
+static void    NRF_ClearInterrupts();
 static void    NRF_Configure(void); // Configure the registers of the NRF module
-static void    NRF_WaitForLink(void); // Wait for a link between the modules
+
+static void    NRF_PrepareWrite(uint8_t address);
+static void    NRF_PrepareRead(uint8_t address, uint8_t count);
 
 void NRF_WriteRegister(uint8_t reg, uint8_t value) {
     NRF_CSN = 0; // Pull SCSN low
     
-    tdSSCK;
-    spi2Write(NRF_WRITE_REG | reg); // Write address
-    tSRD;
+    NrfWrite(W_REGISTER | (reg & W_REGISTER_MSK)); // Write command and address
     nrfSTATUS = spi2Write(value); // Write value
-    tSREADY;
 
     NRF_CSN = 1; // Pull SCSN high
-    tEND;
+    
 }
 
 uint8_t NRF_ReadRegister(uint8_t reg) {
-    uint8_t read;
-    
+    uint8_t read = 0;
     NRF_CSN = 0; // Pull SCSN low
     
-    tdSSCK;
-    spi2Write(NRF_READ_REG | reg); // Write address
-    tSRD;
-    read = spi2Write(0x00); // Read value
-    tSREADY;
-    
+    NrfWrite(R_REGISTER | (reg & R_REGISTER_MSK)); // Read command and address
+    read = NrfWrite(0xFF); // Read value
+
     NRF_CSN = 1; // Pull SCSN high
-    tEND;
+    DelayUs(1);
+    
     return read;
 }
 
-void NRF_WriteData() {
-    NRF_WriteRegister(NRF_TXBUF0_Adr, writeData.command);
-    NRF_WriteRegister(NRF_TXBUF1_Adr, writeData.data);
-    NRF_WriteRegister(NRF_TXBUF2_Adr, writeData.command + writeData.data);
+void NRF_UpdateStatus() {
+    NRF_CSN = 0; // Pull SCSN low
     
-    // Send data
-    NRF_WriteRegister(NRF_TXCOUNT_Adr,3);
+    nrfSTATUS = NrfWrite(W_NOP); // Write command and address
+
+    NRF_CSN = 1; // Pull SCSN high
+    DelayUs(1);
 }
 
-void NRF_ReadData() {
-    readData.command = NRF_ReadRegister(NRF_RXBUF0_Adr);
-    readData.data = NRF_ReadRegister(NRF_RXBUF1_Adr);
-    readData.crc = NRF_ReadRegister(NRF_RXBUF2_Adr);
-}
-
-void NRF_WaitForLink() {
-    NRF_STALED_0 = 0;
-    ////C_DEBUG_WriteMessage("Connecting...");
-    while(!NRF_ReadRegister(NRF_LNKSTA_Adr)) {
-        DelayMs(10);
+void NRF_WritePayload(uint8_t * data, uint16_t length) {
+    
+    NRF_CE = 0;
+    NRF_CSN = 0; // Pull SCSN low
+    
+    NrfWrite(W_TX_PAYLOAD); // Write to TX-FIFO command
+    
+    // Send data to TX-FIFO while kept CSN low
+    uint16_t l = 0;
+    while (l < length) {
+        NrfWrite(data[l]);
+        l++;
     }
-    ////C_DEBUG_WriteMessage("Link established!");
-    NRF_STALED_0 = 1;
+    
+    NRF_CSN = 1; // Pull SCSN high
+    DelayUs(1);
+    
+    // Send payload
+    NRF_CE = 1;
+    DelayUs(12);
+    NRF_CE = 0;
+    DelayUs(1);
 }
+
+void NRF_ReadPayload(uint8_t * data, uint8_t count) {
+    NRF_CSN = 0; // Pull SCSN low
+    
+    NrfWrite(R_RX_PAYLOAD); // Write to RX-FIFO command
+    
+    // Send data to TX-FIFO while kept CSN low
+    int l = 0;
+    while (l < count) {
+        data[l] = spi2Write(0x00);
+        l++;
+    }
+
+    NRF_CSN = 1; // Pull SCSN high
+    DelayUs(1);
+    
+    NRF_FlushRx();
+}
+
+void NRF_FlushTx() {
+     NRF_CSN = 0; // Pull SCSN low
+    
+    nrfSTATUS = NrfWrite(FLUSH_TX); // Write command
+
+    NRF_CSN = 1; // Pull SCSN high
+    DelayUs(1);
+}
+
+void NRF_FlushRx() {
+    NRF_CSN = 0; // Pull SCSN low
+    
+    nrfSTATUS = NrfWrite(FLUSH_RX); // Write command
+
+    NRF_CSN = 1; // Pull SCSN high
+    DelayUs(1);
+}
+
+void NRF_ClearInterrupts() {
+    nrfSTATUS = 0x70;
+    NRF_WriteRegister(nrfSTATUSbits.address, nrfSTATUS);
+}
+
+void NRF_PrepareWrite(uint8_t address) {
+    
+    // Clear 
+    NRF_CE = 0;
+    NRF_FlushTx();
+    NRF_ClearInterrupts();
+    
+    // Set as PTX
+    nrfCONFIGbits.PRIM_RX = 0;
+    NRF_WriteRegister(nrfCONFIGbits.address, nrfCONFIG);
+    
+    // Write addresses
+//    if (lastAddress != address) {
+//        NRF_WriteRegister(nrfTX_ADDRbits.address, address);
+//        NRF_WriteRegister(nrfRX_ADDR_P0bits.address, address);
+//    }
+    
+    lastAddress = address;
+}
+
+void NRF_PrepareRead(uint8_t address, uint8_t count) {
+    // Clear 
+    NRF_CE = 0;
+    NRF_FlushRx();
+    NRF_ClearInterrupts();
+    
+    // Enable pipe 3
+    nrfEN_RXADDRbits.ERX_P0 = 1;
+    NRF_WriteRegister(nrfEN_RXADDRbits.address, nrfEN_RXADDR);
+    
+    // Enable auto acknowledge
+    nrfEN_AAbits.ENAA_P0 = 1;
+    NRF_WriteRegister(nrfEN_AAbits.address, nrfEN_AA);
+    
+    // Payload width
+    NRF_WriteRegister(nrfRX_PW_P0bits.address, count);
+    
+    // Write addresses
+//    NRF_WriteRegister(nrfRX_ADDR_P0bits.address, address);
+//    NRF_WriteRegister(nrfRX_ADDR_P1bits.address, address);
+//    NRF_WriteRegister(nrfRX_ADDR_P2bits.address, address);
+//    NRF_WriteRegister(nrfRX_ADDR_P3bits.address, address);
+//    NRF_WriteRegister(nrfRX_ADDR_P4bits.address, address);
+//    NRF_WriteRegister(nrfRX_ADDR_P5bits.address, address);
+    
+        // Set as PTX
+    nrfCONFIGbits.PRIM_RX = 1;
+    //nrfCONFIGbits.PWR_UP = 1;
+    NRF_WriteRegister(nrfCONFIGbits.address, nrfCONFIG);
+    
+    DelayMs(5);
+    
+    NRF_CE = 1;
+    DelayUs(100);
+}
+
+
+
 
 void NRF_Configure() {
-    // Initial port values
-    NRF_Reset; // Reset
-    ////C_DEBUG_WriteMessage("NRF reset");
-    NRF_STALED_0 = 0;
     NRF_CSN = 1; // Active low SCSN pin
-    tSTARTUP;
+    DelayMs(10);
     
-    // Write registers
-    NRF_WriteRegister(NRF_TXSTA_Adr, 0x50); // 32kHz
-    NRF_WriteRegister(NRF_TXLAT_Adr, 0x06); // Latency settings
-    NRF_WriteRegister(NRF_I2SCNF_IN_Adr, 0x80); // I2S Master mode
-    NRF_WriteRegister(NRF_TXPWR_Adr,0x03); // 0dBm output power
-    NRF_WriteRegister(NRF_CH0_Adr, 31); // Randomly generated
-    NRF_WriteRegister(NRF_CH1_Adr, 59); // Randomly generated
-    NRF_WriteRegister(NRF_CH2_Adr, 17); // Randomly generated
-    NRF_WriteRegister(NRF_CH3_Adr, 3); // Randomly generated
-    NRF_WriteRegister(NRF_CH4_Adr, 45); // Randomly generated
-    NRF_WriteRegister(NRF_CH5_Adr, 73); // Randomly generated
-    NRF_WriteRegister(NRF_NBCH_Adr, 0x02); // Maximum number of channels that are not used at any time
-    NRF_WriteRegister(NRF_NACH_Adr, 0x06); // Maximum number of channels that are used during streaming at any time
-    NRF_WriteRegister(NRF_NLCH_Adr, 0x06); // Maximum number of channels that are used during link up phase
+    NRF_FlushRx();
+    NRF_FlushTx();
+    NRF_ClearInterrupts();
     
-    NRF_WriteRegister(NRF_ADDR0_Adr, 0x15); // Radio address byte #1
-    NRF_WriteRegister(NRF_ADDR1_Adr, 0x36); // Radio address byte #2
-    NRF_WriteRegister(NRF_ADDR2_Adr, 0x57); // Radio address byte #3
-    NRF_WriteRegister(NRF_ADDR3_Adr, 0x78); // Radio address byte #4
-    NRF_WriteRegister(NRF_ADDR4_Adr, 0x99); // Radio address byte #5
+    // CONFIG
+    nrfCONFIGbits.PWR_UP = 1;  // Power up
+    NRF_WriteRegister(nrfCONFIGbits.address, nrfCONFIG);
     
-    NRF_WriteRegister(NRF_INTCF_Adr, 0x58); // Enable all interrupts
-    NRF_WriteRegister(NRF_I2SCNF_OUT_Adr, 0x00); // I2S mode
-    NRF_WriteRegister(NRF_RXPWR_Adr, 0x03); // 0dBm output power
-    NRF_WriteRegister(NRF_RXMOD_Adr, 0x20); // Enable RF
-    NRF_WriteRegister(NRF_TXMOD_Adr, 0x83); // Enable RF and MCLK
+    // SETUP_AW
+    //nrfSETUP_AWbits.AW = 0b01; // 3 bytes address length
+    //NRF_WriteRegister(nrfSETUP_AWbits.address, nrfSETUP_AW);
+    
+    // SETUP_RETR
+    //nrfSETUP_RETRbits.ADR = 0b0000; // Wait 250µs 
+    //nrfSETUP_RETRbits.ARC = 5; // Retry 5 times
+    //NRF_WriteRegister(nrfSETUP_RETRbits.address, nrfSETUP_RETR);
+    
+    // RF_SETUP
+    //nrfRF_SETUPbits.RF_DR_LOW = 0;
+    //nrfRF_SETUPbits.RF_DR_HIGH = 1; // 1Mbps
+    //nrfRF_SETUPbits.RF_PWR = 0b00; // 0dBm
+    //NRF_WriteRegister(nrfRF_SETUPbits.address, nrfSETUP_RETR);
+    
+    // Wait to power up
+    DelayMs(100);
 }
 
 /*******************************************************************************
  *          CONTROLLER FUNCTIONS
 *******************************************************************************/
-void nrfInit() {
+void nrfInit(uint8_t address, void (*onInterrupt)(nrfIrq_t irqState)) {
+    
+    // Event function pointer
+    nrfInterrupt = onInterrupt;
+    
+    // Address
+    thisAddress = address;
+    
     // Initialize ports
     NRF_CE_Dir = 0;
     NRF_CSN_Dir = 0; 
-    NRF_IRQ_Dir  = 1; /** set as input when used!!! Map to interrupt port**/ 
+    NRF_CE = 0;
     
     // Initialize SPI module
     spi2Init();
     spi2Enable(true);
     
-    // Initialize status
-    status.STA = NRF_STATUS_Initialize;
-    WFsm.NextState = WFSM_SSetup;
-    WFsm.State = WFSM_SSetup;
-    writeBusy = false;
-    readFlag = false;
-    writeFlag = false;
+    // Last device
+    lastAddress = 0xFF;
+    
+    // IRQ state
+    nrfIrqState.maxRetry = false;
+    nrfIrqState.readReady = false;
+    nrfIrqState.sendReady = false;
+    nrfIrqState.rxPipeNo = 0b111; // RX FIFO empty
+    nrfIrqState.txFull = false;
     
     // Enable the interrupts
-    // TODO: create interrupt controller
+    NRF_IRQ_Dir = 1;
+    RPINR0bits.INT1R = 47; // Connect to RPI47 (RB15)
+    INTCON2bits.INT1EP = 1; // Interrupt on negative edge
+    _INT1IF = 0; // Clear flag
+    _INT1IP = IP_INT1;
+    _INT1IE = 1;
     
     // Configure NRF module
-    NRF_Configure();
-    NRF_WaitForLink();
+    NRF_Configure();   
     
+    uint8_t adr = NRF_ReadRegister(nrfRX_ADDR_P0bits.address);
+    printf("ADR: %d\n", adr);
 }
 
-void nrfCheckInterrupts() {
-    uint8_t interruptSource = 0;
-    interruptSource = NRF_ReadRegister(NRF_INTSTA_Adr);
-    NRF_WriteRegister(NRF_INTSTA_Adr, NRF_STATUS_IntClear); // Clear all flags
-    
-    switch(interruptSource) {
-        case NRF_STATUS_IntLB:
-            //C_DEBUG_WriteMessage("Link broken");
-            NRF_WaitForLink();
-            break;
-
-        case NRF_STATUS_IntTD:
-            writeFlag = true;
-            break;
-
-        case NRF_STATUS_IntDR:
-            NRF_ReadData();
-            if(writeBusy){
-                readFlag = true;
-            } else {
-                if(readData.crc == (readData.command + readData.data)) {
-                    writeData.command = CRC_OK;
-                    //C_DEBUG_WriteRegister(REG_CUSTOM, NRF_DataRead.data);
-                } else {
-                    writeData.command = CRC_NOK;
-                }
-                NRF_WriteData();
-            }
-            
-            break;
-
-        default:
-            break;
-    }
-
-    
-//    while(NRF_IRQ == 0) {
-//        
-//    }
+void nrfWrite(uint8_t address, uint8_t * data, uint16_t length) {
+    NRF_PrepareWrite(address);
+    NRF_WritePayload(data, length);
 }
 
-void nrfWriteData(nrfData_t data) {
+void nrfPrepareRead(uint8_t address, uint8_t count) {
+    NRF_PrepareRead(address, count);
+}
+
+void nrfRead(uint8_t * data, uint8_t count) {
+    NRF_ReadPayload(data, count);
+}
+
+void nrfGetConfig(uint8_t * config) {
+    * config = NRF_ReadRegister(nrfCONFIGbits.address);
+}
+
+void nrfGetStatus(uint8_t * status) {
+    * status = NRF_ReadRegister(nrfSTATUSbits.address);
+}
+
+void __attribute__ ( (interrupt, no_auto_psv) ) _INT1Interrupt( void ) {
     
-    if(writeBusy) {
-        return;
+    // Read STATUS register to determine IRQ source
+    NRF_UpdateStatus();
+    
+    // Maximum retry interrupt
+    if (nrfSTATUSbits.MAX_RT) {
+        nrfIrqState.maxRetry = true;
     } else {
-        writeBusy = true;
+        nrfIrqState.maxRetry = false;
     }
     
-    while(writeBusy) {
-        // Transitions
-        
-        //C_DEBUG_WriteRegister(NRF_TXBUF0_Adr, WFsm.State);
-        
-        switch(WFsm.State) {
-            case WFSM_SSetup:
-                WFsm.NextState = WFSM_SWrite;
-                break;
-                
-            case WFSM_SWrite:
-                WFsm.NextState = WFSM_SWait;
-                break;
-                
-            case WFSM_SWait:
-                if(readFlag) {
-                    readFlag = false;
-                    WFsm.NextState = WFSM_SCheck;
-                }
-                if(waitCnt > WAIT_MAX) {
-                    //C_DEBUG_WriteMessage("Wait exceeded");
-                    writeBusy = false;
-                    readFlag = false;
-                    WFsm.State = WFSM_SSetup;
-                    return;
-                }
-                break;
-                
-            case WFSM_SCheck:
-                if(readData.command == CRC_OK) {
-                    WFsm.State = WFSM_SSetup;
-                    writeBusy = false;
-                    readFlag = false;
-                } else {
-                    if(resendCnt > RESEND_MAX) {
-                        //C_DEBUG_WriteMessage("Resend exceeded");
-                        writeBusy = false;
-                        readFlag = false;
-                        WFsm.NextState = WFSM_SSetup;
-                    } else {
-                        WFsm.NextState = WFSM_SWrite;
-                    }
-                }
-                break;
-                
-            default:
-                break;
-        }
-        
-        // Do work
-        switch(WFsm.State) {
-            case WFSM_SSetup:
-                waitCnt = 0;
-                resendCnt = 0;
-                writeData.command = data.command;
-                writeData.data = data.data; 
-                break;
-                
-            case WFSM_SWrite:
-                NRF_WriteData();
-                resendCnt++;
-                break;
-                
-            case WFSM_SWait:
-                waitCnt++;
-                break;
-                
-            case WFSM_SCheck:
-                
-                break;
-                
-            default:
-                break;
-        }        
-        // Clock
-        WFsm.State = WFsm.NextState;
+    // Read ready interrupt
+    if (nrfSTATUSbits.RX_DR) {
+        nrfIrqState.readReady = true;
+    } else {
+        nrfIrqState.readReady = false;
     }
-}
-
-void nrfReadData(nrfData_t data) {
-    // Get the data
-//    data.command = NRF_ReadRegister(NRF_RXBUF0_Adr);
-//    data.data = NRF_ReadRegister(NRF_RXBUF1_Adr);
-//    data.crc = NRF_ReadRegister(NRF_RXBUF2_Adr);
+    
+    // Send ready interrupt
+    if (nrfSTATUSbits.TX_DS) {
+        nrfIrqState.sendReady = true;
+    } else {
+        nrfIrqState.sendReady = false;
+    }
+    
+    nrfIrqState.rxPipeNo = nrfSTATUSbits.RX_P_NO;
+    nrfIrqState.txFull = nrfSTATUSbits.TX_FULL;
+    
+    // Write to clear interrupts
+    NRF_ClearInterrupts();
+    
+    (*nrfInterrupt)(nrfIrqState);
+    _INT1IF = 0;        //Clear the INT1 interrupt flag or else
 }

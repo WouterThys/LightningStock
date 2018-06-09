@@ -7,36 +7,14 @@
 /******************************************************************************/
 /* Defines                                                                    */
 /******************************************************************************/ 
-// Link defines    
-#define NRF_NPPF        8
-#define NRF_LNK_WTRH    10
-#define NRF_LNK_ETRH    50
-#define NRF_LNK_OK      0x0000
-#define NRF_LNK_WRN     0x0001
-#define NRF_LNK_ERR     0x0002    
 
-// Status defines    
-#define NRF_STATUS_Initialize       0x00
-#define NRF_STATUS_Running          0x01    
-#define NRF_STATUS_LinkEstablihed   0x01
-#define NRF_STATUS_IntNone          0x00
-#define NRF_STATUS_IntTD            0x10
-#define NRF_STATUS_IntDR            0x08
-#define NRF_STATUS_IntLB            0x40
-#define NRF_STATUS_IntClear         0x58   
-      
-typedef struct NRF_STATUS {
-    uint8_t STA; // Status: Initialising, Running, .............
-    uint8_t LNK; // Established link or not.
-    uint8_t INT; // Interrupt.
-    uint8_t PWR; // Transceiver output power.
-} nrfStatus_t;   
-
-typedef struct NRF_DATA {
-    uint8_t command; // Command
-    uint8_t data; // Data
-    uint8_t crc; // Control
-} nrfData_t;
+typedef struct {
+    unsigned readReady:1; // Data Ready RX-FIFO interrupt set
+    unsigned sendReady:1;  // Data Sent TX-FIFO interrupt set
+    unsigned maxRetry:1;  // Maximum number TX retransmits interrupt set
+    unsigned rxPipeNo:3;  // Data pipe number for payloayd available on pipe
+    unsigned txFull:1;    // TX-FIFO full flag
+} nrfIrq_t;
     
 /******************************************************************************/
 /* Variables                                                                  */
@@ -47,25 +25,18 @@ typedef struct NRF_DATA {
 /* System Function Prototypes                                                 */
 /******************************************************************************/
 /**
- * Initialise the NRF module
- * Initialises pins and interrupt to communicate with the NRF module
- * Should be called in the early initialising phase at startup.
+ * Initialize the NRF module as TX
+ * Initializes pins and interrupt to communicate with the NRF module
+ * Should be called in the early initializing phase at startup.
  */
-void nrfInit(void);
-/**
- * Check interrupts, should be called when IRQ pin is changed
- */
-void nrfCheckInterrupts(void); 
-/**
- * Write data to the other chip
- * @param data: stuct with command and data.
- */
-void nrfWriteData(nrfData_t data);
-/**
- * Read data to the other chip
- * @param data: stuct with command and data.
- */
-void nrfReadData(nrfData_t data);
+void nrfInit(uint8_t address, void (*onInterrupt)(nrfIrq_t irqState));
 
+void nrfWrite(uint8_t address, uint8_t * data, uint16_t length);
+
+void nrfPrepareRead(uint8_t address, uint8_t count);
+void nrfRead(uint8_t * read, uint8_t count);
+
+void nrfGetConfig(uint8_t * config);
+void nrfGetStatus(uint8_t * status);
 
 #endif

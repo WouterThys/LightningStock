@@ -3,8 +3,6 @@
 #include <stdint.h>        /* Includes uint16_t definition                    */
 #include <stdbool.h>       /* Includes true/false definition                  */
 
-#include "../Settings.h"
-#include "SYSTEM_Driver.h"
 #include "UART_Driver.h"
 /*******************************************************************************
  *          DEFINES
@@ -364,7 +362,6 @@ void __attribute__ ( (interrupt, no_auto_psv) ) _U1RXInterrupt(void) {
         if(U1STAbits.OERR == 1) {
             // Do something with error?
             uartDriverEnable(false);
-            DelayUs(10);
             uartDriverEnable(true);
             inputBufferCnt = 0;
             return;

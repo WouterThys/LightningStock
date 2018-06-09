@@ -17,6 +17,7 @@
 /*******************************************************************************
  *          DEFINES
  ******************************************************************************/
+#define ADDRESS  0xAA
 
 /*******************************************************************************
  *          MACRO FUNCTIONS
@@ -31,13 +32,15 @@
 /*******************************************************************************
  *          VARIABLES
  ******************************************************************************/
-
+static bool nrfIrqFlag = false;
+static nrfIrq_t nrfIrq;
 
 /*******************************************************************************
  *          LOCAL FUNCTIONS
  ******************************************************************************/
 static void initialize();
 static void uartReadDone(UartData_t data);
+static void nrfInterrupt(nrfIrq_t irqState);
 
 void initialize() {
     sysInterruptEnable(false);
@@ -56,6 +59,11 @@ void uartReadDone(UartData_t data) {
     
 }
 
+void nrfInterrupt(nrfIrq_t irqState) {
+    nrfIrq = irqState;
+    nrfIrqFlag = true;
+}
+
 
 /*******************************************************************************
  *          MAIN PROGRAM
@@ -70,12 +78,34 @@ int main(void) {
     DelayMs(10);
     
     // Initialize nRF
-    nrfInit();
+    nrfInit(ADDRESS, &nrfInterrupt);
     
     DelayMs(10);
-    printf("panda");
+    printf("SLAVE INIT\n");
+    nrfPrepareRead(ADDRESS, 10);
+    printf("Waiting for data..\n");
     
     while(1) {
         
+        if (nrfIrqFlag) {
+            if (nrfIrq.maxRetry) {
+                printf("IRQ: Max retry..\n");
+            }
+            if (nrfIrq.sendReady) {
+                printf("IRQ: Send ready..\n");
+            }
+            if (nrfIrq.readReady) {
+                printf("IRQ: Read ready..\n");
+            }
+            nrfIrqFlag = false;
+           
+            uint8_t data[10];
+            nrfRead(data, 10);
+            
+            int i;
+            for(i = 0; i < 10; i++) {
+                printf("%d, ", data[i]);
+            }
+        }
     }
 }

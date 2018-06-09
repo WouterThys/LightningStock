@@ -17,7 +17,7 @@
 #define IP_U1RX     3
 #define SPI2_IP     2
 #define SPI1_IP     4
-#define IP_CN       1
+#define IP_INT1     1
 
     
 /**

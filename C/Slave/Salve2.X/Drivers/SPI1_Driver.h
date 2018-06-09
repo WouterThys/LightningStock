@@ -1,9 +1,8 @@
 #ifndef SPI1_DRIVER_H
 #define	SPI1_DRIVER_H
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
+#include "../Settings.h"    
+
     
 extern uint16_t SPI1_ReadData;
     

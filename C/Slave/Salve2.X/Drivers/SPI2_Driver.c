@@ -3,7 +3,6 @@
 #include <stdint.h>        /* Includes uint16_t definition                    */
 #include <stdbool.h>       /* Includes true/false definition                  */
 
-#include "../Settings.h"
 #include "SPI2_Driver.h"
 
 /*******************************************************************************
@@ -35,11 +34,12 @@ void spi2Init() {
     SPI2CON1bits.DISSCK = 0;        // Internal SPI clock is enabled
     SPI2CON1bits.DISSDO = 0;        // SD02 pin is controlled by the module
     SPI2CON1bits.MODE16 = 0;        // Communication is byte-wide (8-bit)
+    SPI2CON1bits.SMP = 1;
     SPI2CON1bits.CKE = 1;           // Serial output data changes on transition from Idle clock state to active clock state
     SPI2CON1bits.CKP = 0;           // Idle state for clock is a low level; active state is a high level mode
     SPI2CON1bits.MSTEN = 1;         // Master mode
-    SPI2CON1bits.SPRE = 0b000;       // Secondary pre-scale 8:1
-    SPI2CON1bits.PPRE = 0b00;       // Primary pre-scale 64:1
+    SPI2CON1bits.SPRE = 0b010;       // Secondary pre-scale 8:1
+    SPI2CON1bits.PPRE = 0b01;       // Primary pre-scale 64:1
 
     /* SPI2CON2 Register */
     SPI2CON2bits.FRMEN = 0;         // Framed SPI2 support is enabled (SSx pin used as frame sync pule input/output)

@@ -33,7 +33,8 @@
  *          VARIABLES
  ******************************************************************************/
 static nrfIrq_t nrfIrqState;
-static nrfDevice_t * lastTxDevice;
+static uint8_t lastAddress;
+static uint8_t thisAddress;
 
 /* Event function pointers */
 static void (*nrfInterrupt)(nrfIrq_t irqState);
@@ -43,7 +44,6 @@ static void (*nrfInterrupt)(nrfIrq_t irqState);
 *******************************************************************************/
 static void    NRF_WriteRegister(uint8_t reg, uint8_t value); // Write to a register
 static uint8_t NRF_ReadRegister(uint8_t reg); // Read from a register
-static void    NRF_WriteAddress(uint8_t reg, uint8_t * address, uint16_t length);
 static void    NRF_UpdateStatus();
 static void    NRF_WritePayload(uint8_t * data, uint16_t length);
 static void    NRF_ReadPayload();
@@ -52,8 +52,8 @@ static void    NRF_FlushRx();
 static void    NRF_ClearInterrupts();
 static void    NRF_Configure(void); // Configure the registers of the NRF module
 
-static void    NRF_PrepareWrite(nrfDevice_t * device);
-static void    NRF_PrepareRead(nrfDevice_t * device);
+static void    NRF_PrepareWrite(uint8_t address);
+static void    NRF_PrepareRead(uint8_t address);
 
 void NRF_WriteRegister(uint8_t reg, uint8_t value) {
     NRF_CSN = 0; // Pull SCSN low
@@ -76,23 +76,6 @@ uint8_t NRF_ReadRegister(uint8_t reg) {
     DelayUs(1);
     
     return read;
-}
-
-void NRF_WriteAddress(uint8_t reg, uint8_t * address, uint16_t length) {
-    NRF_CSN = 0; // Pull SCSN low
-    
-    NrfWrite(W_REGISTER | (reg & W_REGISTER_MSK)); // Write command and address
-    
-    // Send data to address register while kept CSN low
-    uint16_t l = 0;
-    while (l < length) {
-        NrfWrite(address[l]);
-        l++;
-    }
-
-    NRF_CSN = 1; // Pull SCSN high
-    
-    DelayUs(1);
 }
 
 void NRF_UpdateStatus() {
@@ -173,7 +156,7 @@ void NRF_ClearInterrupts() {
     NRF_WriteRegister(nrfSTATUSbits.address, nrfSTATUS);
 }
 
-void NRF_PrepareWrite(nrfDevice_t  * device) {
+void NRF_PrepareWrite(uint8_t address) {
     
     // Clear 
     NRF_CE = 0;
@@ -184,18 +167,22 @@ void NRF_PrepareWrite(nrfDevice_t  * device) {
     nrfCONFIGbits.PRIM_RX = 0;
     NRF_WriteRegister(nrfCONFIGbits.address, nrfCONFIG);
     
-    // Write addresses
-    if (lastTxDevice->id != device->id) {
-        NRF_WriteAddress(nrfTX_ADDRbits.address, device->address, ADDRESS_LENGTH);
-        NRF_WriteAddress(nrfRX_ADDR_P0bits.address, device->address, ADDRESS_LENGTH);
-    }
+    // No ack
+    nrfEN_AAbits.ENAA_P0 = 1;
+    NRF_WriteRegister(nrfEN_AAbits.address, nrfEN_AA);
     
-    // Device
-    device->writeBusy = true;
-    lastTxDevice = device;
+    
+    // Write addresses
+    //if (lastAddress != address) {
+    //    NRF_WriteRegister(nrfTX_ADDRbits.address, address);
+    //    NRF_WriteRegister(nrfRX_ADDR_P0bits.address, address);
+    //    NRF_WriteRegister(nrfRX_ADDR_P3bits.address, address);
+    //}
+    
+    lastAddress = address;
 }
 
-void NRF_PrepareRead(nrfDevice_t * device) {
+void NRF_PrepareRead(uint8_t address) {
     
 }
 
@@ -215,19 +202,19 @@ void NRF_Configure() {
     NRF_WriteRegister(nrfCONFIGbits.address, nrfCONFIG);
     
     // SETUP_AW
-    nrfSETUP_AWbits.AW = 0b01; // 3 bytes address length
-    NRF_WriteRegister(nrfSETUP_AWbits.address, nrfSETUP_AW);
+    //nrfSETUP_AWbits.AW = 0b01; // 3 bytes address length
+    //NRF_WriteRegister(nrfSETUP_AWbits.address, nrfSETUP_AW);
     
     // SETUP_RETR
-    nrfSETUP_RETRbits.ADR = 0b0000; // Wait 250µs 
-    nrfSETUP_RETRbits.ARC = 5; // Retry 5 times
-    NRF_WriteRegister(nrfSETUP_RETRbits.address, nrfSETUP_RETR);
+    //nrfSETUP_RETRbits.ADR = 0b0000; // Wait 250µs 
+    //nrfSETUP_RETRbits.ARC = 5; // Retry 5 times
+    //NRF_WriteRegister(nrfSETUP_RETRbits.address, nrfSETUP_RETR);
     
     // RF_SETUP
-    nrfRF_SETUPbits.RF_DR_LOW = 0;
-    nrfRF_SETUPbits.RF_DR_HIGH = 1; // 1Mbps
-    nrfRF_SETUPbits.RF_PWR = 0b00; // 0dBm
-    NRF_WriteRegister(nrfSETUP_RETRbits.address, nrfSETUP_RETR);
+    //nrfRF_SETUPbits.RF_DR_LOW = 0;
+    //nrfRF_SETUPbits.RF_DR_HIGH = 1; // 1Mbps
+    //nrfRF_SETUPbits.RF_PWR = 0b00; // 0dBm
+    //NRF_WriteRegister(nrfRF_SETUPbits.address, nrfSETUP_RETR);
     
     // Wait to power up
     DelayMs(100);
@@ -236,10 +223,13 @@ void NRF_Configure() {
 /*******************************************************************************
  *          CONTROLLER FUNCTIONS
 *******************************************************************************/
-void nrfInit(void (*onInterrupt)(nrfIrq_t irqState)) {
+void nrfInit(uint8_t address, void (*onInterrupt)(nrfIrq_t irqState)) {
     
     // Event function pointer
     nrfInterrupt = onInterrupt;
+    
+    // Address
+    thisAddress = address;
     
     // Initialize ports
     NRF_CE_Dir = 0;
@@ -251,7 +241,7 @@ void nrfInit(void (*onInterrupt)(nrfIrq_t irqState)) {
     spi2Enable(true);
     
     // Last device
-    lastTxDevice->id = -1;
+    lastAddress = 0xFF;
     
     // IRQ state
     nrfIrqState.maxRetry = false;
@@ -272,9 +262,8 @@ void nrfInit(void (*onInterrupt)(nrfIrq_t irqState)) {
     NRF_Configure();    
 }
 
-void nrfWrite(nrfDevice_t  * device, uint8_t * data, uint16_t length) {
-    if (device->writeBusy) return;
-    NRF_PrepareWrite(device);
+void nrfWrite(uint8_t address, uint8_t * data, uint16_t length) {
+    NRF_PrepareWrite(address);
     NRF_WritePayload(data, length);
 }
 
@@ -286,9 +275,6 @@ void __attribute__ ( (interrupt, no_auto_psv) ) _INT1Interrupt( void ) {
     // Maximum retry interrupt
     if (nrfSTATUSbits.MAX_RT) {
         nrfIrqState.maxRetry = true;
-        if (lastTxDevice->id > 0) {
-            lastTxDevice->writeBusy = false;
-        }
     } else {
         nrfIrqState.maxRetry = false;
     }
@@ -296,9 +282,6 @@ void __attribute__ ( (interrupt, no_auto_psv) ) _INT1Interrupt( void ) {
     // Read ready interrupt
     if (nrfSTATUSbits.RX_DR) {
         nrfIrqState.readReady = true;
-        if (lastTxDevice->id > 0) {
-            lastTxDevice->readBusy = false;
-        }
     } else {
         nrfIrqState.readReady = false;
     }
@@ -306,9 +289,6 @@ void __attribute__ ( (interrupt, no_auto_psv) ) _INT1Interrupt( void ) {
     // Send ready interrupt
     if (nrfSTATUSbits.TX_DS) {
         nrfIrqState.sendReady = true;
-        if (lastTxDevice->id > 0) {
-            lastTxDevice->writeBusy = false;
-        }
     } else {
         nrfIrqState.sendReady = false;
     }

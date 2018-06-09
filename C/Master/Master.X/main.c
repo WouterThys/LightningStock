@@ -7,10 +7,10 @@
 
 #include "Settings.h"
 #include "utils.h"
-#include "Controllers/NRF_Controller.h"
 #include "Drivers/SYSTEM_Driver.h"
 #include "Drivers/UART_Driver.h"
-
+#include "Drivers/SPI2_Driver.h"
+#include "Controllers/NRF_Controller.h"
 
 
 
@@ -18,24 +18,22 @@
 /*******************************************************************************
  *          DEFINES
  ******************************************************************************/
+#define MY_ADDRESS  0xAA
+
 
 /*******************************************************************************
  *          MACRO FUNCTIONS
  ******************************************************************************/
 
-
 /*******************************************************************************
  *          DEFINES
  ******************************************************************************/
-uint8_t ADR1[] = {0xA1, 0xB2, 0xC3};
 
 /*******************************************************************************
  *          VARIABLES
  ******************************************************************************/
 static bool nrfIrqFlag = false;
 static nrfIrq_t nrfIrq;
-
-static nrfDevice_t device1 = { 1, {0xA1, 0xB2, 0xC3}, false, false };
 
 /*******************************************************************************
  *          LOCAL FUNCTIONS
@@ -82,12 +80,14 @@ int main(void) {
     DelayMs(100);
     
     // Initialize nRF
-    nrfInit(&nrfInterrupt);
+    nrfInit(MY_ADDRESS, &nrfInterrupt);
     DelayMs(10);
+    printf("MASTER INIT");
+    DelayMs(20);
     
     // Test
     uint8_t data[10] = {1,2,3, 4, 5, 6, 7, 8, 9, 10};
-    nrfWrite(&device1, data, 10);
+    nrfWrite(MY_ADDRESS, data, 10);
     // Test
     
     while(1) {
@@ -103,6 +103,10 @@ int main(void) {
                 printf("IRQ: Read ready..\n");
             }
             nrfIrqFlag = false;
+            
+            DelayMs(2000);
+            uint8_t data[10] = {1,2,3, 4, 5, 6, 7, 8, 9, 10};
+            nrfWrite(MY_ADDRESS, data, 10);
         }
         
         

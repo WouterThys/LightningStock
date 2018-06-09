@@ -1,115 +1,9 @@
-/* 
- * File:   User input functions
- * Author: wouter
- */
 #ifndef NRF_MODULE_H
 #define	NRF_MODULE_H
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 #include <stdint.h>        /* Includes uint16_t definition                    */
 #include <stdbool.h>       /* Includes true/false definition                  */
-    
-/******************************************************************************/
-/* Registers: nRF2460                                                         */
-/******************************************************************************/   
-// ATX register addresses
-#define NRF_TXSTA_Adr       0x01
-#define NRF_INTSTA_Adr      0x02    
-#define NRF_TXMOD_Adr       0x5A
-#define NRF_TXLAT_Adr       0x52
-#define NRF_INTCF_Adr       0x53
-#define NRF_I2SCNF_IN_Adr   0x54   
-#define NRF_TXPWR_Adr       0x56
-#define NRF_TXRESO_Adr      0x50
-    
-// LINK status register addresses
-#define NRF_LNKSTA_Adr      0x03
 
-// LINK control register addresses
-#define NRF_CH0_Adr         0x0C
-#define NRF_CH1_Adr         0x0D
-#define NRF_CH2_Adr         0x0E
-#define NRF_CH3_Adr         0x0F
-#define NRF_CH4_Adr         0x10
-#define NRF_CH5_Adr         0x11
-#define NRF_CH6_Adr         0x12
-#define NRF_CH7_Adr         0x13
-#define NRF_CH8_Adr         0x14
-#define NRF_CH9_Adr         0x15
-#define NRF_CH10_Adr        0x16
-#define NRF_CH11_Adr        0x17
-#define NRF_CH12_Adr        0x18
-#define NRF_CH13_Adr        0x19
-#define NRF_CH14_Adr        0x1A
-#define NRF_CH15_Adr        0x1B
-#define NRF_CH16_Adr        0x1C
-#define NRF_CH17_Adr        0x1D
-#define NRF_CH18_Adr        0x1E
-#define NRF_CH19_Adr        0x1F
-#define NRF_CH20_Adr        0x20
-#define NRF_CH21_Adr        0x21
-#define NRF_CH22_Adr        0x22
-#define NRF_CH23_Adr        0x23
-#define NRF_CH24_Adr        0x24
-#define NRF_CH25_Adr        0x25
-#define NRF_CH26_Adr        0x26
-#define NRF_CH27_Adr        0x27
-#define NRF_CH28_Adr        0x28
-#define NRF_CH29_Adr        0x29
-#define NRF_CH30_Adr        0x2A
-#define NRF_CH31_Adr        0x2B
-#define NRF_CH32_Adr        0x2C
-#define NRF_CH33_Adr        0x2D
-#define NRF_CH34_Adr        0x2E
-#define NRF_CH35_Adr        0x2F
-#define NRF_CH36_Adr        0x30
-#define NRF_CH37_Adr        0x31
-#define NRF_BCHD_Adr        0x32
-#define NRF_NBCH_Adr        0x33
-#define NRF_NACH_Adr        0x34
-#define NRF_NLCH_Adr        0x35
-#define NRF_LNKMOD_Adr      0x36
-#define NRF_MDUR_Adr        0x0B
-#define NRF_ADDR0_Adr       0x39
-#define NRF_ADDR1_Adr       0x3A
-#define NRF_ADDR2_Adr       0x3B
-#define NRF_ADDR3_Adr       0x3C
-#define NRF_ADDR4_Adr       0x3D    
-#define NRF_LNKCSTATE_Adr   0x3E
-
-// DATA channel    
-#define NRF_DTXSTA_Adr      0x4E    
-#define NRF_RXCOUNT_Adr     0x5B
-#define NRF_TXCOUNT_Adr     0x5C
-#define NRF_RXBUF0_Adr      0x5D
-#define NRF_RXBUF1_Adr      0x5E
-#define NRF_RXBUF2_Adr      0x5F    
-#define NRF_TXBUF0_Adr      0x65   
-#define NRF_TXBUF1_Adr      0x66    
-#define NRF_TXBUF2_Adr      0x67        
-
-// ARX control register addresses
-#define NRF_RXMOD_Adr       0x4A
-#define NRF_I2SCNF_OUT_Adr  0x44
-#define NRF_RXPWR_Adr       0x49
-#define NRF_SYNCDL_Adr      0x37
-
-// Test register addresses
-#define NRF_TESTREG_Adr     0x7E
-#define NRF_TESTCH_Adr      0x7F
-#define NRF_REVBYT_Adr      0x7D    
-    
-/******************************************************************************/
-/* Useful defines                                                            */
-/******************************************************************************/      
-#define NRF_0DBM        0x03
-#define NRF_5DBM        0x02
-#define NRF_10DBM       0x01
-#define NRF_20DBM       0x00    
-    
     
 /******************************************************************************/
 /* Register values                                                            */
@@ -239,7 +133,7 @@ struct RF_SETUP_s {
     union {
         struct {
             unsigned :1;                 // Reserved
-            unsigned RF_PXR:2;           // Set RF output power in TX mode
+            unsigned RF_PWR:2;           // Set RF output power in TX mode
             unsigned RF_DR_HIGH:1;       // Select between high speed data rates
             unsigned PLL_LOCK:1;         // Force PLL lock signal. Only used in test
             unsigned RF_DR_LOW:1;        // Set RF Data Rate to 250kbps.
@@ -534,10 +428,10 @@ struct FIFO_STATUS_s {
             unsigned :2;                 // Reserved
             unsigned TX_EMPTY:1;         // TX FIFO empty flag
             unsigned TX_FULL:1;          // TX FIFO full flag
-            unsigned DPL_P5:1;           // Enable dynamic payload
-            unsigned :2;                 // Reserved
+            unsigned TX_REUSE:1;         // 
+            unsigned :1;                 // Reserved
         };
-        long value;
+        uint8_t value;
     };
     uint8_t address;
 };

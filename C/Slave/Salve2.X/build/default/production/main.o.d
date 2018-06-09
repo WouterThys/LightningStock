@@ -4,4 +4,6 @@ Settings.h  \
 utils.h  \
  Drivers/SYSTEM_Driver.h  \
 Drivers/UART_Driver.h  \
- Controllers/NRF_Controller.h 
+Drivers/../Settings.h  \
+ Drivers/SYSTEM_Driver.h  \
+Controllers/NRF_Controller.h 
