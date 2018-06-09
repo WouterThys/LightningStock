@@ -24,8 +24,8 @@
  *  PIC
  */
  
-//#define LED1            PORTBbits.RB15
-//#define LED1_Dir        TRISBbits.TRISB15
+#define LED1            PORTAbits.RA1
+#define LED1_Dir        TRISAbits.TRISA1
 //#define LED2            PORTBbits.RB14
 //#define LED2_Dir        TRISBbits.TRISB14 
     

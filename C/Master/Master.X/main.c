@@ -27,13 +27,15 @@
 /*******************************************************************************
  *          DEFINES
  ******************************************************************************/
-
+uint8_t ADR1[] = {0xA1, 0xB2, 0xC3};
 
 /*******************************************************************************
  *          VARIABLES
  ******************************************************************************/
 static bool nrfIrqFlag = false;
 static nrfIrq_t nrfIrq;
+
+static nrfDevice_t device1 = { 1, {0xA1, 0xB2, 0xC3}, false, false };
 
 /*******************************************************************************
  *          LOCAL FUNCTIONS
@@ -72,29 +74,33 @@ void nrfInterrupt(nrfIrq_t irqState) {
 
 int main(void) {
     initialize();
+    LED1 = 1;
     
     // Initialize UART
     uartDriverInit(UART1_BAUD, &uartReadDone);
     uartDriverEnable(true);
-    DelayMs(10);
+    DelayMs(100);
     
     // Initialize nRF
-    nrfInitMaster(&nrfInterrupt);
-    
+    nrfInit(&nrfInterrupt);
     DelayMs(10);
-    printf("panda");
+    
+    // Test
+    uint8_t data[10] = {1,2,3, 4, 5, 6, 7, 8, 9, 10};
+    nrfWrite(&device1, data, 10);
+    // Test
     
     while(1) {
         
         if (nrfIrqFlag) {
             if (nrfIrq.maxRetry) {
-                printf("IRQ: Max retry..");
+                printf("IRQ: Max retry..\n");
             }
             if (nrfIrq.sendReady) {
-                printf("IRQ: Send ready..");
+                printf("IRQ: Send ready..\n");
             }
             if (nrfIrq.readReady) {
-                printf("IRQ: Read ready..");
+                printf("IRQ: Read ready..\n");
             }
             nrfIrqFlag = false;
         }
