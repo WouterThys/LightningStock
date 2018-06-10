@@ -46,14 +46,14 @@ static void    NRF_WriteRegister(uint8_t reg, uint8_t value); // Write to a regi
 static uint8_t NRF_ReadRegister(uint8_t reg); // Read from a register
 static void    NRF_UpdateStatus();
 static void    NRF_WritePayload(uint8_t * data, uint16_t length);
-static void    NRF_ReadPayload();
+static void    NRF_ReadPayload(uint8_t * data, uint8_t length);
 static void    NRF_FlushTx();
 static void    NRF_FlushRx();
 static void    NRF_ClearInterrupts();
 static void    NRF_Configure(void); // Configure the registers of the NRF module
 
 static void    NRF_PrepareWrite(uint8_t address);
-static void    NRF_PrepareRead(uint8_t address);
+static void    NRF_PrepareRead(uint8_t address, uint8_t count);
 
 void NRF_WriteRegister(uint8_t reg, uint8_t value) {
     NRF_CSN = 0; // Pull SCSN low
@@ -111,26 +111,22 @@ void NRF_WritePayload(uint8_t * data, uint16_t length) {
     DelayUs(1);
 }
 
-void NRF_ReadPayload() {
+void NRF_ReadPayload(uint8_t * data, uint8_t length) {
     NRF_CSN = 0; // Pull SCSN low
     
     NrfWrite(R_RX_PAYLOAD); // Write to RX-FIFO command
     
-//    // Send data to TX-FIFO while kept CSN low
-//    int l = 0;
-//    while (l < length) {
-//        spi2Write(*(data + l));
-//        l++;
-//    }
-//
-//    NRF_CSN = 1; // Pull SCSN high
-//    
-//    // Send payload
-//    NRF_CE = 1;
-//    DelayUs(10);
-//    NRF_CE = 0;
-    
+    // Send data to TX-FIFO while kept CSN low
+    int l = 0;
+    while (l < length) {
+        data[l] = spi2Write(0x00);
+        l++;
+    }
+
+    NRF_CSN = 1; // Pull SCSN high
     DelayUs(1);
+    
+    NRF_FlushRx();
 }
 
 void NRF_FlushTx() {
@@ -167,7 +163,7 @@ void NRF_PrepareWrite(uint8_t address) {
     nrfCONFIGbits.PRIM_RX = 0;
     NRF_WriteRegister(nrfCONFIGbits.address, nrfCONFIG);
     
-    // No ack
+    // Enable ack
     nrfEN_AAbits.ENAA_P0 = 1;
     NRF_WriteRegister(nrfEN_AAbits.address, nrfEN_AA);
     
@@ -182,8 +178,40 @@ void NRF_PrepareWrite(uint8_t address) {
     lastAddress = address;
 }
 
-void NRF_PrepareRead(uint8_t address) {
+void NRF_PrepareRead(uint8_t address, uint8_t length) {
+    // Clear 
+    NRF_CE = 0;
+    NRF_FlushRx();
+    NRF_ClearInterrupts();
     
+    // Enable pipe 3
+    nrfEN_RXADDRbits.ERX_P0 = 1;
+    NRF_WriteRegister(nrfEN_RXADDRbits.address, nrfEN_RXADDR);
+    
+    // Enable auto acknowledge
+    nrfEN_AAbits.ENAA_P0 = 1;
+    NRF_WriteRegister(nrfEN_AAbits.address, nrfEN_AA);
+    
+    // Payload width
+    NRF_WriteRegister(nrfRX_PW_P0bits.address, length);
+    
+    // Write addresses
+//    NRF_WriteRegister(nrfRX_ADDR_P0bits.address, address);
+//    NRF_WriteRegister(nrfRX_ADDR_P1bits.address, address);
+//    NRF_WriteRegister(nrfRX_ADDR_P2bits.address, address);
+//    NRF_WriteRegister(nrfRX_ADDR_P3bits.address, address);
+//    NRF_WriteRegister(nrfRX_ADDR_P4bits.address, address);
+//    NRF_WriteRegister(nrfRX_ADDR_P5bits.address, address);
+    
+        // Set as PTX
+    nrfCONFIGbits.PRIM_RX = 1;
+    //nrfCONFIGbits.PWR_UP = 1;
+    NRF_WriteRegister(nrfCONFIGbits.address, nrfCONFIG);
+    
+    DelayMs(5);
+    
+    NRF_CE = 1;
+    DelayUs(100);
 }
 
 

@@ -288,6 +288,9 @@ void nrfInit(uint8_t address, void (*onInterrupt)(nrfIrq_t irqState)) {
     
     // Configure NRF module
     NRF_Configure();   
+    
+    uint8_t adr = NRF_ReadRegister(nrfRX_ADDR_P0bits.address);
+    printf("ADR: %d\n", adr);
 }
 
 void nrfWrite(uint8_t address, uint8_t * data, uint16_t length) {

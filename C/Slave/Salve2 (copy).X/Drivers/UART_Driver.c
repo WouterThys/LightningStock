@@ -275,7 +275,7 @@ void fillDataBuffer(uint8_t data) {
  ******************************************************************************/
 void uartDriverInit(uint16_t baud, void (*onReadDone)(UartData_t data)) {
     
-    readDone = onReadDone;
+    //readDone = onReadDone;
     initializeRegisters(baud);
 }
 
@@ -367,7 +367,6 @@ void __attribute__ ( (interrupt, no_auto_psv) ) _U1RXInterrupt(void) {
             return;
         } 
        
-        //fillDataBuffer(data);
-        (*readDone)(readData);
+        fillDataBuffer(data);
     }
 }

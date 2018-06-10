@@ -24,18 +24,12 @@
  *  PIC
  */
  
-#define LED1            PORTAbits.RA1
-#define LED1_Dir        TRISAbits.TRISA1
-//#define LED2            PORTBbits.RB14
-//#define LED2_Dir        TRISBbits.TRISB14 
-    
-
+#define NRF_LINK_LED    LATAbits.LATA0
+#define NRF_ERR_LED     LATAbits.LATA1
     
 /**
  * NRF
  */
-#define NRF_STALED_0    PORTAbits.RA0       /* Status LED for NRF             */
-
 #define NRF_CSN         PORTBbits.RB14 
 #define NRF_CE          PORTBbits.RB13
 #define NRF_IRQ         PORTBbits.RB15
