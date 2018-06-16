@@ -11,6 +11,7 @@
 #include "Drivers/UART_Driver.h"
 
 #include "Controllers/NRF_Controller.h"
+#include "Controllers/MCP_Controller.h"
 
 
 
@@ -152,10 +153,21 @@ int main(void) {
     // Initialize nRF
     nrfInit(NRF_ADDRESS, &nrfInterrupt);
     
+    // Initialize MCP
+    mcpInit();
+    
     DelayMs(10);
     printf("SLAVE INIT\n");
     
+    uint8_t p = 0;
+    
     while(1) {
+        
+        //
+        mcpSetPORTB(p);
+        p++;
+        DelayMs(500);
+        //
         
         if (nrfIrqFlag) {
             if (nrfIrq.maxRetry) {

@@ -8,6 +8,8 @@
         <itemPath>Controllers/NRF_Channels.h</itemPath>
         <itemPath>Controllers/NRF_Controller.h</itemPath>
         <itemPath>Controllers/NRF_Module.h</itemPath>
+        <itemPath>Controllers/MCP_Controller.h</itemPath>
+        <itemPath>Controllers/MCP_Module.h</itemPath>
       </logicalFolder>
       <logicalFolder name="Drivers" displayName="Drivers" projectFiles="true">
         <itemPath>Drivers/SPI1_Driver.h</itemPath>
@@ -27,6 +29,7 @@
                    projectFiles="true">
       <logicalFolder name="Controllers" displayName="Controllers" projectFiles="true">
         <itemPath>Controllers/NRF_Controller.c</itemPath>
+        <itemPath>Controllers/MCP_Controller.c</itemPath>
       </logicalFolder>
       <logicalFolder name="Drivers" displayName="Drivers" projectFiles="true">
         <itemPath>Drivers/SPI1_Driver.c</itemPath>

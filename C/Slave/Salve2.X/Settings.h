@@ -42,6 +42,14 @@
 #define NRF_IRQ_Dir     TRISBbits.TRISB15
 
 
+/**
+ * MCP23S17
+ */
+#define MCP_CS          PORTBbits.RB4
+#define MCP_CS_Dir      TRISBbits.TRISB4
+#define MCP_ADDR        0b01000000
+
+
     
 /**
  * UART
@@ -50,27 +58,27 @@
 #define UART1_ID        2   
 
 #define UART1_RX_Dir    TRISBbits.TRISB6    /* RX Pin on RP38-RB6             */
-#define UART1_TX_Dir    TRISBbits.TRISB7    /* TX Pin on RP39-RB7             */
+#define UART1_TX_Dir    TRISBbits.TRISB5    /* TX Pin on RP37-RB5             */
 
 #define UART1_RX_Map    0b0100110           /* RX on RP38                     */
-#define UART1_TX_Map    RPOR2bits.RP39R     /* TX on RP39                     */
+#define UART1_TX_Map    RPOR1bits.RP37R     /* TX on RP37                     */
     
 /**
  * SPI 1
  */    
     
-#define SPI1_SCK_Pin    PORTBbits.RB11      /* SCK Pin on RP43-RB11           */
-#define SPI1_SCK_Dir    TRISBbits.TRISB11
+#define SPI1_SCK_Pin    PORTBbits.RB7      /* SCK Pin on RP39-RB7             */
+#define SPI1_SCK_Dir    TRISBbits.TRISB7
     
-#define SPI1_SDO_Pin    PORTBbits.RB10      /* SDO Pin on RP42-RB10           */
-#define SPI1_SDO_Dir    TRISBbits.TRISB10    
+#define SPI1_SDO_Pin    PORTBbits.RB8      /* SDO Pin on RP40-RB8             */
+#define SPI1_SDO_Dir    TRISBbits.TRISB8    
     
-#define SPI1_SDI_Pin    PORTBbits.RB12      /* SDI Pin on RPI44-RB12          */
-#define SPI1_SDI_Dir    TRISBbits.TRISB12        
+#define SPI1_SDI_Pin    PORTBbits.RB9      /* SDI Pin on RPI41-RB9            */
+#define SPI1_SDI_Dir    TRISBbits.TRISB9        
     
-#define SPI1_SDO_Map    0b001000
-#define SPI1_SCK_Map    0b001001  
-#define SPI1_SDI_Map    44
+//#define SPI1_SDO_Map    0b001000
+//#define SPI1_SCK_Map    0b001001  
+//#define SPI1_SDI_Map    44
 
 
 

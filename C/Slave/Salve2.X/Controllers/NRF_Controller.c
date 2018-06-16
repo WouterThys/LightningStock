@@ -50,7 +50,7 @@ static void    NRF_ReadPayload(uint8_t * data, uint8_t length);
 static void    NRF_FlushTx();
 static void    NRF_FlushRx();
 static void    NRF_ClearInterrupts();
-static void    NRF_Configure(void); // Configure the registers of the NRF module
+static void    NRF_Configure(); // Configure the registers of the NRF module
 
 static void    NRF_PrepareWrite(uint8_t address);
 static void    NRF_PrepareRead(uint8_t address, uint8_t count);

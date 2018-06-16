@@ -2,9 +2,6 @@
 #define	SPI1_DRIVER_H
 
 #include "../Settings.h"    
-
-    
-extern uint16_t SPI1_ReadData;
     
 /******************************************************************************/
 /* System Function Prototypes                                                 */
@@ -26,7 +23,7 @@ void spi1Enable(bool enable);
  * 
  * @param data
  */
-void spi1Write(uint16_t data);
+uint8_t spi1Write(uint8_t data);
 
 
 
