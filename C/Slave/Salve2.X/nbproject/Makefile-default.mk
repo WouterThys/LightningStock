@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=Controllers/NRF_Controller.c Drivers/SPI1_Driver.c Drivers/SPI2_Driver.c Drivers/SYSTEM_Driver.c Drivers/UART_Driver.c configuration.c utils.c main.c Controllers/MCP_Controller.c
+SOURCEFILES_QUOTED_IF_SPACED=Controllers/NRF_Controller.c Drivers/SPI1_Driver.c Drivers/SPI2_Driver.c Drivers/SYSTEM_Driver.c Drivers/UART_Driver.c configuration.c utils.c main.c Controllers/MCP_Controller.c Controllers/LED_Controller.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Controllers/NRF_Controller.o ${OBJECTDIR}/Drivers/SPI1_Driver.o ${OBJECTDIR}/Drivers/SPI2_Driver.o ${OBJECTDIR}/Drivers/SYSTEM_Driver.o ${OBJECTDIR}/Drivers/UART_Driver.o ${OBJECTDIR}/configuration.o ${OBJECTDIR}/utils.o ${OBJECTDIR}/main.o ${OBJECTDIR}/Controllers/MCP_Controller.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/Controllers/NRF_Controller.o.d ${OBJECTDIR}/Drivers/SPI1_Driver.o.d ${OBJECTDIR}/Drivers/SPI2_Driver.o.d ${OBJECTDIR}/Drivers/SYSTEM_Driver.o.d ${OBJECTDIR}/Drivers/UART_Driver.o.d ${OBJECTDIR}/configuration.o.d ${OBJECTDIR}/utils.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/Controllers/MCP_Controller.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Controllers/NRF_Controller.o ${OBJECTDIR}/Drivers/SPI1_Driver.o ${OBJECTDIR}/Drivers/SPI2_Driver.o ${OBJECTDIR}/Drivers/SYSTEM_Driver.o ${OBJECTDIR}/Drivers/UART_Driver.o ${OBJECTDIR}/configuration.o ${OBJECTDIR}/utils.o ${OBJECTDIR}/main.o ${OBJECTDIR}/Controllers/MCP_Controller.o ${OBJECTDIR}/Controllers/LED_Controller.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/Controllers/NRF_Controller.o.d ${OBJECTDIR}/Drivers/SPI1_Driver.o.d ${OBJECTDIR}/Drivers/SPI2_Driver.o.d ${OBJECTDIR}/Drivers/SYSTEM_Driver.o.d ${OBJECTDIR}/Drivers/UART_Driver.o.d ${OBJECTDIR}/configuration.o.d ${OBJECTDIR}/utils.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/Controllers/MCP_Controller.o.d ${OBJECTDIR}/Controllers/LED_Controller.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/Controllers/NRF_Controller.o ${OBJECTDIR}/Drivers/SPI1_Driver.o ${OBJECTDIR}/Drivers/SPI2_Driver.o ${OBJECTDIR}/Drivers/SYSTEM_Driver.o ${OBJECTDIR}/Drivers/UART_Driver.o ${OBJECTDIR}/configuration.o ${OBJECTDIR}/utils.o ${OBJECTDIR}/main.o ${OBJECTDIR}/Controllers/MCP_Controller.o
+OBJECTFILES=${OBJECTDIR}/Controllers/NRF_Controller.o ${OBJECTDIR}/Drivers/SPI1_Driver.o ${OBJECTDIR}/Drivers/SPI2_Driver.o ${OBJECTDIR}/Drivers/SYSTEM_Driver.o ${OBJECTDIR}/Drivers/UART_Driver.o ${OBJECTDIR}/configuration.o ${OBJECTDIR}/utils.o ${OBJECTDIR}/main.o ${OBJECTDIR}/Controllers/MCP_Controller.o ${OBJECTDIR}/Controllers/LED_Controller.o
 
 # Source Files
-SOURCEFILES=Controllers/NRF_Controller.c Drivers/SPI1_Driver.c Drivers/SPI2_Driver.c Drivers/SYSTEM_Driver.c Drivers/UART_Driver.c configuration.c utils.c main.c Controllers/MCP_Controller.c
+SOURCEFILES=Controllers/NRF_Controller.c Drivers/SPI1_Driver.c Drivers/SPI2_Driver.c Drivers/SYSTEM_Driver.c Drivers/UART_Driver.c configuration.c utils.c main.c Controllers/MCP_Controller.c Controllers/LED_Controller.c
 
 
 CFLAGS=
@@ -157,6 +157,13 @@ ${OBJECTDIR}/Controllers/MCP_Controller.o: Controllers/MCP_Controller.c  nbproje
 	${MP_CC} $(MP_EXTRA_CC_PRE)  Controllers/MCP_Controller.c  -o ${OBJECTDIR}/Controllers/MCP_Controller.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Controllers/MCP_Controller.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/Controllers/MCP_Controller.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
+${OBJECTDIR}/Controllers/LED_Controller.o: Controllers/LED_Controller.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/Controllers" 
+	@${RM} ${OBJECTDIR}/Controllers/LED_Controller.o.d 
+	@${RM} ${OBJECTDIR}/Controllers/LED_Controller.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  Controllers/LED_Controller.c  -o ${OBJECTDIR}/Controllers/LED_Controller.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Controllers/LED_Controller.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/Controllers/LED_Controller.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
 else
 ${OBJECTDIR}/Controllers/NRF_Controller.o: Controllers/NRF_Controller.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/Controllers" 
@@ -220,6 +227,13 @@ ${OBJECTDIR}/Controllers/MCP_Controller.o: Controllers/MCP_Controller.c  nbproje
 	@${RM} ${OBJECTDIR}/Controllers/MCP_Controller.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  Controllers/MCP_Controller.c  -o ${OBJECTDIR}/Controllers/MCP_Controller.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Controllers/MCP_Controller.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/Controllers/MCP_Controller.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/Controllers/LED_Controller.o: Controllers/LED_Controller.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/Controllers" 
+	@${RM} ${OBJECTDIR}/Controllers/LED_Controller.o.d 
+	@${RM} ${OBJECTDIR}/Controllers/LED_Controller.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  Controllers/LED_Controller.c  -o ${OBJECTDIR}/Controllers/LED_Controller.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Controllers/LED_Controller.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/Controllers/LED_Controller.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 endif
 

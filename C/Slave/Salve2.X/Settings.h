@@ -19,6 +19,14 @@
 #define SPI1_IP     4
 #define IP_INT1     1
 
+
+/**
+ * LED LOCATIONS
+ */
+#define LED_ROWS    12
+#define LED_COLS    5
+
+
     
 /**
  *  PIC

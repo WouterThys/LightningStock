@@ -12,6 +12,7 @@
 
 #include "Controllers/NRF_Controller.h"
 #include "Controllers/MCP_Controller.h"
+#include "Controllers/LED_Controller.h"
 
 
 
@@ -50,26 +51,6 @@ typedef struct {
     nrfCommand_t command;     // Command to send to the receiver
     uint8_t      msgLength;   // Number of bytes that will follow after this command
 } nrfHeader_t;
-
-/**
- * LED information. Total space is 2 bytes:
- * 
- * Location:
- *  |R3|R2|R1|R0|C3|C2|C1|C0|
- *   Rx: 4-bit wide row
- *   Cx: 4-bit wide column
- * 
- * RGB brightness
- *  |R2|R1|R0|G2|G1|G0|B1|B0|
- *   Rx: 3-bit wide red LED brightness
- *   Gx: 3-bit wide green LED brightness
- *   Bx: 2-bit wide blue LED brightness
- */
-typedef struct {
-    uint8_t row:4;      // Location row
-    uint8_t col:4;      // Location column
-    uint8_t RGB;        // RGB LED brightness
-} LedLocation_t;
 
 
 
@@ -150,11 +131,10 @@ int main(void) {
     slaveFsm.currentState = S0_PrepareCommand;
     slaveFsm.nextState = S0_PrepareCommand;
     
-    // Initialize nRF
+    // Initialize controllers
     nrfInit(NRF_ADDRESS, &nrfInterrupt);
-    
-    // Initialize MCP
     mcpInit();
+    ledInit();
     
     DelayMs(10);
     printf("SLAVE INIT\n");
